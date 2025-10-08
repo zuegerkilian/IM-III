@@ -46,7 +46,7 @@ foreach ($parkhaeuser_data as $parkhaus) {
     
     // 3. belegung_prozent: Übernehmen, NULL-Werte für Datenbank vorbereiten (Float oder NULL)
     // MariaDB/MySQL PDO behandelt PHP 'null' als SQL NULL
-    $belegung_prozent = is_numeric($parkhaus['belegung_prozent']) ? (float)$parkhaus['belegung_prozent'] : null;
+    $belegung_prozent = is_numeric($parkhaus['belegung_prozent']) ? (float)$parkhaus['belegung_prozent'] : "0";
 
     // 4. phid: Übernehmen
     $phid = $parkhaus['phid'] ?? '';
@@ -71,5 +71,7 @@ foreach ($parkhaeuser_data as $parkhaus) {
 echo "Transformation abgeschlossen. " . count($transformedData) . " Datensätze transformiert.\n";
 
 // Kodiert die transformierten Daten in JSON
+$json_output = json_encode($transformedData, JSON_PRETTY_PRINT);
 
 // Gibt die JSON-Daten zurück, anstatt sie auszugeben
+return $json_output;
