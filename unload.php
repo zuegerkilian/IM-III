@@ -42,19 +42,29 @@ try {
     // Initialisiere die Abfrage
     $sql_params = [];
     
-    // SQL-Query, um Daten aus der 'Parkhaeuser'-Tabelle auszuwählen
-    // Sortiert nach der automatisch generierten ID oder einem Zeitstempel, falls vorhanden
-    $sql = "SELECT * FROM `Parkhaeuser` WHERE 1";
+    // SQL-Query mit JOIN, um alle Informationen aus beiden Tabellen zu holen
+    // Filtert Daten der letzten 7 Tage für Wochendiagramm
+    $sql = "SELECT 
+                p.id,
+                p.phid,
+                p.created_at,
+                p.phstate,
+                p.shortfree,
+                p.belegung_prozent,
+                ps.*
+            FROM Parkhaeuser p
+            LEFT JOIN Ph_stammdaten ps ON p.phid = ps.phid
+            WHERE p.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
 
-    // Fügt eine WHERE-Klausel hinzu, wenn ein phid-Filter vorhanden ist
+    // Fügt eine zusätzliche WHERE-Klausel hinzu, wenn ein phid-Filter vorhanden ist
     if ($phid !== null) {
         // Verwende benannte Parameter für bessere Lesbarkeit und Sicherheit
-        $sql .= " WHERE phid = :phid";
+        $sql .= " AND p.phid = :phid";
         $sql_params[':phid'] = $phid;
     }
 
-    // Sortierung hinzufügen (Annahme: eine 'created_at' Spalte existiert, oder nach einer ID sortieren)
-    $sql .= " ORDER BY created_at DESC";
+    // Sortierung nach Zeit (neueste zuerst) für Wochenanalyse
+    $sql .= " ORDER BY p.created_at DESC";
 
     // Bereitet die SQL-Anweisung vor
     $stmt = $pdo->prepare($sql);
