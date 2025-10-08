@@ -117,8 +117,12 @@ font-size: var(--font-size);
   justify-content: center;
 }
 
+/* Parkhaus-Buttons mit Bildern */
 .parkhaus-btn {
-  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
   border: 1px solid #28a745;
   border-radius: 6px;
   background: white;
@@ -127,7 +131,15 @@ font-size: var(--font-size);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 80px;
+  min-width: 100px;
+}
+
+.parkhaus-btn img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 8px;
 }
 
 .parkhaus-btn:hover {

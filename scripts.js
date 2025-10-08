@@ -123,20 +123,18 @@ function switchIndividualView(view, activeBtn, inactiveBtn) {
 }
 
 // ==================== PARKHAUS-BUTTONS ====================
+// ==================== PARKHAUS-BUTTONS ====================
 function createParkhausButtons() {
     const container = document.getElementById('parkhausButtons');
     container.innerHTML = '';
     
     availableParkhaeuser.forEach(parkhaus => {
         const button = document.createElement('button');
-        button.className = 'parkhaus-btn';
-        button.textContent = parkhaus.phname;
-        button.dataset.phid = parkhaus.phid;
-        
-        if (parkhaus.phid === selectedParkhaus) {
-            button.classList.add('active');
-        }
-        
+        button.classList.add('parkhaus-btn');
+        button.innerHTML = `
+            <img src="images/${parkhaus.phid}.jpg" alt="${parkhaus.phname}">
+            <span>${parkhaus.phname}</span>
+        `;
         button.addEventListener('click', () => switchParkhaus(parkhaus.phid, button));
         container.appendChild(button);
     });
@@ -145,13 +143,13 @@ function createParkhausButtons() {
 function switchParkhaus(phid, button) {
     selectedParkhaus = phid;
     if (currentChart) currentChart.destroy();
-    
+
     if (individualView === 'weekly') {
-        createIndividualParkhausChart(allDataCache, selectedParkhaus);
+        createIndividualParkhausChart(allDataCache, phid);
     } else {
-        createIndividual24hDetailChart(allDataCache, selectedParkhaus);
+        createIndividual24hDetailChart(allDataCache, phid);
     }
-    
+
     updateIndividualChartTitle();
     updateFreePlacesDisplay();
     setActiveParkhausButton(button);
