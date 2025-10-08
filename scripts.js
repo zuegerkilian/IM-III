@@ -24,8 +24,14 @@ fetch('https://im3-projekt.wanderpodcastecho.ch/unload.php')
 function extractAvailableParkhaeuser(data) {
     const parkhausMap = new Map();
     
+    // Alle Parkhäuser mit Daten der letzten 7 Tage sammeln
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    
     data.forEach(entry => {
-        if (entry.phstate === 'offen' && !parkhausMap.has(entry.phid)) {
+        const entryTime = new Date(entry.created_at || entry.time);
+        
+        // Parkhaus hinzufügen wenn es in den letzten 7 Tagen Daten hat
+        if (entryTime >= sevenDaysAgo && !parkhausMap.has(entry.phid)) {
             parkhausMap.set(entry.phid, {
                 phid: entry.phid,
                 phname: entry.phname || entry.phid
@@ -37,6 +43,9 @@ function extractAvailableParkhaeuser(data) {
         .sort((a, b) => a.phname.localeCompare(b.phname));
     
     selectedParkhaus = availableParkhaeuser[0]?.phid;
+    
+    console.log(`${availableParkhaeuser.length} Parkhäuser mit Daten der letzten 7 Tage gefunden:`, 
+                availableParkhaeuser.map(ph => ph.phname));
 }
 
 // ==================== EVENT LISTENERS ====================
@@ -159,9 +168,9 @@ function updateIndividualChartTitle() {
 }
 
 function updateFreePlacesDisplay() {
-    // Aktuellsten Wert für freie Parkplätze finden
+    // Aktuellsten Wert für das ausgewählte Parkhaus finden (unabhängig vom Status)
     const latestEntry = allDataCache
-        .filter(entry => entry.phid === selectedParkhaus && entry.phstate === 'offen')
+        .filter(entry => entry.phid === selectedParkhaus)
         .sort((a, b) => new Date(b.created_at || b.time) - new Date(a.created_at || a.time))[0];
     
     let freePlacesContainer = document.getElementById('freePlacesDisplay');
@@ -177,11 +186,23 @@ function updateFreePlacesDisplay() {
     }
     
     if (latestEntry) {
+        const isOpen = latestEntry.phstate === 'offen';
+        const statusClass = isOpen ? 'status-open' : 'status-closed';
+        const statusText = isOpen ? 'Geöffnet' : 'Nicht verfügbar';
+        
         freePlacesContainer.innerHTML = `
             <div class="free-places-info">
-                <span class="label">Aktuell freie Plätze:</span>
-                <span class="value">${latestEntry.shortfree || 0}</span>
-                <span class="percentage">(${(latestEntry.belegung_prozent || 0).toFixed(1)}% belegt)</span>
+                <div class="parkhaus-status">
+                    <span class="status-label">Status:</span>
+                    <span class="status-value ${statusClass}">${statusText}</span>
+                </div>
+                ${isOpen ? `
+                    <div class="free-places-data">
+                        <span class="label">Aktuell freie Plätze:</span>
+                        <span class="value">${latestEntry.shortfree || 0}</span>
+                        <span class="percentage">(${(latestEntry.belegung_prozent || 0).toFixed(1)}% belegt)</span>
+                    </div>
+                ` : '<div class="no-data">Keine Parkplatz-Daten verfügbar</div>'}
             </div>
         `;
     } else {
@@ -201,14 +222,24 @@ function getChartOptions(type) {
         interaction: { intersect: false, mode: 'index' }
     };
 
+    const yAxisConfig = {
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+            stepSize: 10,
+            callback: function(value) {
+                return value + '%';
+            }
+        }
+    };
+
     switch (type) {
-        case 'weekly':
+        case 'dual':
             return {
                 ...baseOptions,
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        max: 100,
+                        ...yAxisConfig,
                         title: { display: true, text: 'Belegung (%)' }
                     },
                     y1: {
@@ -222,41 +253,19 @@ function getChartOptions(type) {
                 }
             };
             
-        case 'daily':
+        case 'single':
             return {
                 ...baseOptions,
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: { display: true, text: 'Durchschnittliche Belegung (%)' }
+                        ...yAxisConfig,
+                        title: { display: true, text: 'Belegung (%)' }
                     },
                     x: { title: { display: true, text: 'Parkhäuser' } }
                 }
             };
             
-        case 'individual':
-            return {
-                ...baseOptions,
-                plugins: {
-                    ...baseOptions.plugins,
-                    tooltip: {
-                        callbacks: {
-                            label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: { display: true, text: 'Auslastung (%)' }
-                    },
-                    x: { title: { display: true, text: 'Datum' } }
-                }
-            };
-            
-        case 'hourly':
+        case 'time':
             return {
                 ...baseOptions,
                 plugins: {
@@ -270,13 +279,23 @@ function getChartOptions(type) {
                 },
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        max: 100,
+                        ...yAxisConfig,
                         title: { display: true, text: 'Auslastung (%)' }
                     },
-                    x: {
+                    x: { 
                         title: { display: true, text: 'Uhrzeit' },
                         ticks: { maxTicksLimit: 12 }
+                    }
+                }
+            };
+            
+        default:
+            return {
+                ...baseOptions,
+                scales: {
+                    y: {
+                        ...yAxisConfig,
+                        title: { display: true, text: 'Auslastung (%)' }
                     }
                 }
             };
@@ -320,7 +339,7 @@ function createIndividualParkhausChart(allData, phid) {
         options: getChartOptions('single')
     });
     
-    updateFreePlacesDisplay(allData, phid);
+    updateFreePlacesDisplay();
 }
 
 function createIndividual24hDetailChart(allData, phid) {
@@ -346,12 +365,12 @@ function createIndividual24hDetailChart(allData, phid) {
         options: getChartOptions('time')
     });
     
-    updateFreePlacesDisplay(allData, phid);
+    updateFreePlacesDisplay();
 }
 
 function processIndividualParkhausData(allData, phid) {
     const parkhausData = allData.filter(entry => 
-        entry.phid === phid && entry.phstate === 'offen' && entry.belegung_prozent
+        entry.phid === phid && entry.belegung_prozent
     );
     
     // Wöchentliche Daten
@@ -446,62 +465,13 @@ function createDaily24hAverageChart(allData) {
     });
 }
 
-function createIndividualParkhausChart(allData, phid) {
-    const ctx = document.getElementById('mainChart');
-    const individualData = processIndividualParkhausData(allData, phid);
-    
-    const parkhausName = allData.find(entry => entry.phid === phid)?.phname || phid;
-    
-    currentChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: individualData.labels,
-            datasets: [{
-                label: `${parkhausName} - Wöchentliche Auslastung (%)`,
-                data: individualData.weeklyData,
-                backgroundColor: 'rgba(75, 192, 192, 0.8)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 2
-            }]
-        },
-        options: getChartOptions('single')
-    });
-    
-    updateFreePlacesDisplay(allData, phid);
-}
-
-function createIndividual24hDetailChart(allData, phid) {
-    const ctx = document.getElementById('mainChart');
-    const individualData = processIndividualParkhausData(allData, phid);
-    
-    const parkhausName = allData.find(entry => entry.phid === phid)?.phname || phid;
-    
-    currentChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: individualData.labels24h,
-            datasets: [{
-                label: `${parkhausName} - 24h Auslastung (%)`,
-                data: individualData.data24h,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.3
-            }]
-        },
-        options: getChartOptions('time')
-    });
-    
-    updateFreePlacesDisplay(allData, phid);
-}
-
 // ==================== DATENVERARBEITUNG ====================
 function processWeeklyData(allData) {
     const groupedByDate = {};
     
     allData.forEach(entry => {
-        if (entry.phstate !== 'offen' || !entry.belegung_prozent) return;
+        // Berücksichtige alle Einträge mit Belegungsdaten, unabhängig vom Status
+        if (!entry.belegung_prozent) return;
         
         const dateKey = new Date(entry.created_at || entry.time).toISOString().split('T')[0];
         
@@ -540,16 +510,20 @@ function process24hAverageData(allData) {
     const groupedByParkhaus = {};
     
     recent24hData.forEach(entry => {
-        if (entry.phstate !== 'offen' || !entry.belegung_prozent) return;
+        // Berücksichtige alle Einträge mit Belegungsdaten, unabhängig vom Status
+        if (!entry.belegung_prozent) return;
         
         if (!groupedByParkhaus[entry.phid]) {
             groupedByParkhaus[entry.phid] = {
                 name: entry.phname || entry.phid,
-                belegungen: []
+                belegungen: [],
+                lastStatus: entry.phstate // Letzten bekannten Status speichern
             };
         }
         
         groupedByParkhaus[entry.phid].belegungen.push(parseFloat(entry.belegung_prozent));
+        // Aktualisiere Status mit dem neuesten Eintrag
+        groupedByParkhaus[entry.phid].lastStatus = entry.phstate;
     });
     
     const labels = [], averages = [], colors = [], borderColors = [];
@@ -563,8 +537,14 @@ function process24hAverageData(allData) {
         labels.push(parkhaus.name);
         averages.push(roundedAvg);
         
-        // Farbkodierung
-        if (roundedAvg >= 90) {
+        // Farbkodierung basierend auf Status und Belegung
+        const isOpen = parkhaus.lastStatus === 'offen';
+        
+        if (!isOpen) {
+            // Geschlossene Parkhäuser in Grautönen
+            colors.push('rgba(128, 128, 128, 0.6)');
+            borderColors.push('rgba(128, 128, 128, 1)');
+        } else if (roundedAvg >= 90) {
             colors.push('rgba(255, 99, 132, 0.8)');
             borderColors.push('rgba(255, 99, 132, 1)');
         } else if (roundedAvg >= 70) {
@@ -575,6 +555,8 @@ function process24hAverageData(allData) {
             borderColors.push('rgba(75, 192, 192, 1)');
         }
     });
+    
+    console.log(`24h-Durchschnitt für ${labels.length} Parkhäuser berechnet:`, labels);
     
     return { labels, averages, colors, borderColors };
 }
