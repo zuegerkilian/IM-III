@@ -14,7 +14,6 @@
    ============================================================================ */
 
 // Datenbankkonfiguration einbinden
-// Die Pfadtiefe wurde an die Annahme angepasst, dass config.php im selben Verzeichnis liegt wie in der load.php.
 require_once 'config.php'; 
 
 // Header setzen, um JSON-Inhaltstyp zurückzugeben
@@ -45,8 +44,7 @@ try {
     
     // SQL-Query, um Daten aus der 'Parkhaeuser'-Tabelle auszuwählen
     // Sortiert nach der automatisch generierten ID oder einem Zeitstempel, falls vorhanden
-    $sql = "SELECT phid, phstate, shortfree, belegung_prozent, verfuegbarkeit, created_at 
-            FROM Parkhaeuser";
+    $sql = "SELECT * FROM `Parkhaeuser` WHERE 1";
 
     // Fügt eine WHERE-Klausel hinzu, wenn ein phid-Filter vorhanden ist
     if ($phid !== null) {
@@ -74,5 +72,6 @@ try {
     // Fehlerbehandlung: Gibt eine Fehlermeldung zurück, wenn etwas schiefgeht
     // Loggen Sie den Fehler für die interne Verwendung, geben Sie aber keine Details an den Benutzer zurück
     // error_log("Datenbankfehler in unload.php: " . $e->getMessage()); 
-    echo json_encode(['error' => 'Ein Datenbankfehler ist aufgetreten.']);
+   echo json_encode(['error' => $e->getMessage()]);
 }
+
