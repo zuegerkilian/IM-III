@@ -1,8 +1,9 @@
 body {
-  font-family: 'Bagel Fat One', cursive;
+  font-family: "Bagel Fat One", system-ui;
+  font-weight: 400;
+  font-style: normal;
 }
-
-
+/*
 h1 {
   color: #B5B5B5;
   font-size: 82px;
@@ -59,8 +60,10 @@ h1 {
 html {
 font-size: var(--font-size);
 }
+*/
 
 /* Button Container Styling */
+/*
 .button-container {
   display: flex;
   justify-content: center;
@@ -96,8 +99,9 @@ font-size: var(--font-size);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,123,255,0.3);
 }
-
+*/
 /* Parkhaus Selector Styling */
+/*
 .parkhaus-selector {
   background: #f8f9fa;
   border: 1px solid #e0e0e0;
@@ -119,9 +123,10 @@ font-size: var(--font-size);
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
-}
+} */
 
 /* Parkhaus-Buttons mit Bildern */
+/*
 .parkhaus-btn {
   display: flex;
   flex-direction: column;
@@ -155,8 +160,9 @@ font-size: var(--font-size);
   background: #28a745;
   color: white;
 }
-
+*/
 /* Individual View Buttons */
+/*
 .individual-view-buttons {
   display: flex;
   gap: 10px;
@@ -188,8 +194,9 @@ font-size: var(--font-size);
   color: white;
   border-color: #6c757d;
 }
-
+*/
 /* Free Places Display */
+/*
 .free-places-display {
   margin-top: 15px;
   padding-top: 15px;
@@ -225,8 +232,9 @@ font-size: var(--font-size);
   color: #666;
   font-style: italic;
 }
-
+*/
 /* Parkhaus Status Styling */
+/*
 .parkhaus-status {
   display: flex;
   align-items: center;
@@ -278,8 +286,9 @@ font-size: var(--font-size);
   text-align: center;
   padding: 10px;
 }
-
+*/
 /* Chart Container Styling */
+/*
 .chart-section {
   background: white;
   border: 1px solid #e0e0e0;
@@ -301,4 +310,53 @@ font-size: var(--font-size);
 
 .chart-section canvas {
   max-height: 500px;
+} */
+
+/* CSS für Quadrate aus Figma */
+
+.square {
+  width: 100px;
+  height: 100px;
+  font-family: "Bagel Fat One";
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+}
+
+.graybar {
+  width: 100px;
+  height: 100px;
+  background-color: #B0B0B0;
+  color: white;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+}
+
+.variantgelb {
+  width: 100px;
+  height: 100px;
+  background-color: #FBEBBF;
+  color: #988244;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+}
+
+.variantpink {
+  background-color: #FFC4EE;
+}
+
+.variantorange {
+  background-color: #FFE1C1;
+}
+
+.variantblau {
+  background-color: #CAF4F1;
 }
