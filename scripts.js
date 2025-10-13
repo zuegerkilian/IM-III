@@ -132,7 +132,7 @@ function createParkhausButtons() {
         const button = document.createElement('button');
         button.classList.add('parkhaus-btn');
         button.innerHTML = `
-            <img src="images/${parkhaus.phid}.jpg" alt="${parkhaus.phname}">
+            <img src="images/IMG_0310.PNG" alt="${parkhaus.phname}">
             <span>${parkhaus.phname}</span>
         `;
         button.addEventListener('click', () => switchParkhaus(parkhaus.phid, button));
