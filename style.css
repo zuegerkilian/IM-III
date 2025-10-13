@@ -2,6 +2,35 @@ body {
   font-family: "Bagel Fat One", system-ui;
   font-weight: 400;
   font-style: normal;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  color: #B5B5B5;
+  font-size: 48px;
+  font-family: "Bagel Fat One", sans-serif;
+  font-weight: 400;
+  word-wrap: break-word;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin: 0;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  padding: 20px;
+  background-color: #f8f9fa;
 }
 /*
 h1 {
@@ -63,7 +92,6 @@ font-size: var(--font-size);
 */
 
 /* Button Container Styling */
-/*
 .button-container {
   display: flex;
   justify-content: center;
@@ -99,9 +127,7 @@ font-size: var(--font-size);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,123,255,0.3);
 }
-*/
 /* Parkhaus Selector Styling */
-/*
 .parkhaus-selector {
   background: #f8f9fa;
   border: 1px solid #e0e0e0;
@@ -123,15 +149,14 @@ font-size: var(--font-size);
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
-} */
+}
 
 /* Parkhaus-Buttons mit Bildern */
-/*
 .parkhaus-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px;
+  padding: 8px 16px;
   border: 1px solid #28a745;
   border-radius: 6px;
   background: white;
@@ -140,15 +165,7 @@ font-size: var(--font-size);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 100px;
-}
-
-.parkhaus-btn img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 50%;
-  margin-bottom: 8px;
+  min-width: 80px;
 }
 
 .parkhaus-btn:hover {
@@ -160,9 +177,7 @@ font-size: var(--font-size);
   background: #28a745;
   color: white;
 }
-*/
 /* Individual View Buttons */
-/*
 .individual-view-buttons {
   display: flex;
   gap: 10px;
@@ -194,9 +209,7 @@ font-size: var(--font-size);
   color: white;
   border-color: #6c757d;
 }
-*/
 /* Free Places Display */
-/*
 .free-places-display {
   margin-top: 15px;
   padding-top: 15px;
@@ -232,9 +245,7 @@ font-size: var(--font-size);
   color: #666;
   font-style: italic;
 }
-*/
 /* Parkhaus Status Styling */
-/*
 .parkhaus-status {
   display: flex;
   align-items: center;
@@ -286,9 +297,7 @@ font-size: var(--font-size);
   text-align: center;
   padding: 10px;
 }
-*/
 /* Chart Container Styling */
-/*
 .chart-section {
   background: white;
   border: 1px solid #e0e0e0;
@@ -310,7 +319,7 @@ font-size: var(--font-size);
 
 .chart-section canvas {
   max-height: 500px;
-} */
+}
 
 /* CSS für Quadrate aus Figma */
 
