@@ -123,7 +123,6 @@ function switchIndividualView(view, activeBtn, inactiveBtn) {
 }
 
 // ==================== PARKHAUS-BUTTONS ====================
-// ==================== PARKHAUS-BUTTONS ====================
 function createParkhausButtons() {
     const container = document.getElementById('parkhausButtons');
     container.innerHTML = '';
@@ -131,11 +130,13 @@ function createParkhausButtons() {
     availableParkhaeuser.forEach(parkhaus => {
         const button = document.createElement('button');
         button.classList.add('parkhaus-btn');
+        button.addEventListener('click', () => switchParkhaus(parkhaus.phid, button));
+        
         button.innerHTML = `
             <img src="images/IMG_0310.PNG" alt="${parkhaus.phname}">
             <span>${parkhaus.phname}</span>
         `;
-        button.addEventListener('click', () => switchParkhaus(parkhaus.phid, button));
+        
         container.appendChild(button);
     });
 }
