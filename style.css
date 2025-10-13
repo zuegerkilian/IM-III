@@ -90,6 +90,7 @@ main {
 .parkhaus-buttons {
   display: flex;
   flex-wrap: wrap;
+  font-family: Bagel Fat One, sans-serif;
   gap: 10px;
   justify-content: center;
 }
@@ -104,6 +105,7 @@ main {
   border-radius: 6px;
   background: white;
   color: #28a745;
+  font-family: "Bagel Fat One", sans-serif;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
