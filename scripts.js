@@ -147,3 +147,27 @@ function addParkhausMarkers() {
     
     console.log(`${parkhausMap.size} Parkhaus-Marker zur Karte hinzugefügt`);
 }
+
+
+// Hover für Overlay
+document.getElementById("parkhaus_button").addEventListener("click", function() {
+  const overlay = document.getElementById("parkhausOverlay");
+  overlay.classList.toggle("active"); // Ein- und ausblenden
+});
+
+
+document.getElementById('parkhausButton').addEventListener('click', function () {
+
+    const overlay = document.getElementById('parkhausOverlay');
+
+    if (overlay.style.display === 'block') {
+
+        overlay.style.display = 'none';
+
+    } else {
+
+        overlay.style.display = 'block';
+
+    }
+
+});
