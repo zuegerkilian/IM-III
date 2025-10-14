@@ -4,8 +4,6 @@ body {
   font-style: normal;
   background-color: #D9D9D9;;
   margin: 0;
-  background-color: #D9D9D9;;
-  padding: 0;
 }
 
 header {
@@ -267,4 +265,21 @@ main {
   font-family: "Bagel Fat One", sans-serif !important;
   font-size: 12px !important;
   margin: 3px 0 !important;
+}
+
+
+.parkhaus_button
+{
+  background-color: #D9D9D9;
+  border: none;
+  color: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  font-family: "Bagel Fat One", sans-serif;
 }
