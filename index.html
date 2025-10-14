@@ -71,7 +71,7 @@
         <div class="parkhaus_container_1">
 
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Parkhaus Neumarkt', 'P001')">
                 <img src="images/IMG_0310.PNG" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                 <div class="graybar_parkhaus">
                  <p>Parkhaus Neumarkt</p>
@@ -80,7 +80,7 @@
             </div>
     
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Parkhaus Rathaus', 'P002')">
                 <img src="images/IMG_0310.PNG" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                 <div class="graybar_parkhaus">
                   <p>Parkhaus Rathaus</p>
@@ -89,7 +89,7 @@
             </div>
     
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Parkhaus Manor', 'P003')">
                 <img src="images/IMG_0310.PNG" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                   <div class="graybar_parkhaus">
                   <p>Parkhaus Manor</p>
@@ -236,6 +236,21 @@
     
         
     </main>
+
+    <!-- Overlay für Parkhaus-Details -->
+    <div id="parkhausOverlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 id="overlayTitle">Parkhaus Details</h2>
+                <button class="close-button" onclick="closeOverlay()">&times;</button>
+            </div>
+            <div class="overlay-body">
+                <div id="overlayContent">
+                    <!-- Dynamischer Inhalt wird hier eingefügt -->
+                </div>
+            </div>
+        </div>
+    </div>
   
 
     <script src="scripts.js"></script>
