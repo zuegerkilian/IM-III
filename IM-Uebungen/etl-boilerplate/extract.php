@@ -33,7 +33,7 @@ function fetchWeatherData()
    
 
     // Dekodiert die JSON-Antwort und gibt Daten zurück
-    return json_decode($response, true);
+    return $response;
 }
 
 // Gibt die Daten zurück, wenn dieses Skript eingebunden ist
