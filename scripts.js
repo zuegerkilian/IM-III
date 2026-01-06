@@ -125,53 +125,25 @@ function displayParkhausDetails(data, parkhausName) {
 
 function displayDemoParkhausDetails(parkhausId, parkhausName) {
     const overlayContent = document.getElementById('overlayContent');
-    
-    // Demo-Daten für verschiedene Parkhäuser
-    const demoData = {
-        'P001': { free: 45, total: 120, occupancy: 62.5, address: 'Neumarkt 2, 9000 St. Gallen' },
-        'P002': { free: 23, total: 80, occupancy: 71.3, address: 'Rathausgasse 1, 9000 St. Gallen' },
-        'P003': { free: 67, total: 200, occupancy: 66.5, address: 'Manorgasse 9, 9000 St. Gallen' }
-    };
-    
-    const data = demoData[parkhausId] || { free: 15, total: 100, occupancy: 85, address: 'St. Gallen Zentrum' };
-    
+    if (!overlayContent) {
+        console.error('Overlay-Container fehlt, kann Fehlerhinweis nicht anzeigen.');
+        return;
+    }
+
+    // Fallback-Anzeige bei Ladefehler oder fehlenden Daten
     overlayContent.innerHTML = `
         <div class="parkhaus-detail">
             <img src="images/IMG_0310.PNG" alt="${parkhausName}" style="width: 200px; border-radius: 15px; margin: 20px 0;">
-            
-            <div class="status-badge status-open">
-                🟢 Geöffnet
+
+            <div class="status-badge status-closed">
+                🔴 Daten konnten nicht geladen werden
             </div>
-            
-            <div class="parkhaus-stats">
-                <div class="stat-box">
-                    <h4>Freie Plätze</h4>
-                    <div class="value">${data.free}</div>
-                </div>
-                <div class="stat-box">
-                    <h4>Belegung</h4>
-                    <div class="value">${data.occupancy.toFixed(1)}%</div>
-                </div>
-                <div class="stat-box">
-                    <h4>Gesamt Plätze</h4>
-                    <div class="value">${data.total}</div>
-                </div>
-                <div class="stat-box">
-                    <h4>Preis/Stunde</h4>
-                    <div class="value">CHF 2.50</div>
-                </div>
-            </div>
-            
+
             <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin: 20px 0;">
-                <h4 style="margin: 0 0 10px 0; color: #333;">📍 Standort</h4>
-                <p style="margin: 0; color: #666; font-size: 14px;">${data.address}</p>
+                <h4 style="margin: 0 0 10px 0; color: #333;">Fehler</h4>
+                <p style="margin: 0; color: #666; font-size: 14px;">Für ${parkhausName} (${parkhausId}) liegen aktuell keine Live-Daten vor.</p>
             </div>
-            
-            <div style="background-color: #e9ecef; padding: 15px; border-radius: 10px; margin: 20px 0;">
-                <h4 style="margin: 0 0 10px 0; color: #333;">🕒 Öffnungszeiten</h4>
-                <p style="margin: 0; color: #666; font-size: 14px;">Mo-So: 06:00 - 24:00 Uhr</p>
-            </div>
-            
+
             <div style="margin: 20px 0;">
                 <button onclick="closeOverlay()" style="
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
