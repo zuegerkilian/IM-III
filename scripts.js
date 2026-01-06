@@ -69,7 +69,7 @@ function displayParkhausDetails(data, parkhausName) {
     const isOpen = latestData.phstate === 'offen';
     const freePlaces = latestData.shortfree || 0;
     const occupancyPercent = latestData.belegung_prozent || 0;
-    const totalPlaces = latestData.parkplaetze_gesamt || 'N/A';
+    const totalPlaces = latestData.shortmax || 'N/A';
     const address = latestData.adresse || 'Adresse nicht verfügbar';
     
     overlayContent.innerHTML = `
