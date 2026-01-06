@@ -51,7 +51,9 @@ try {
                 p.phstate,
                 p.shortfree,
                 p.belegung_prozent,
-                ps.*
+                ps.shortmax,
+                ps.lat,
+                ps.lon
             FROM Parkhaeuser p
             LEFT JOIN Ph_stammdaten ps ON p.phid = ps.phid
             WHERE p.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
