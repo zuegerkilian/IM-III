@@ -6,6 +6,7 @@ body {
   margin: 0;
 }
 
+
 header {
   text-align: center;
   padding: 20px;
@@ -13,6 +14,7 @@ header {
   color: white;
   margin-bottom: 30px;
 }
+
 
 header h1 {
   color: white;
@@ -28,13 +30,18 @@ h4 {
   font-size: 40px;
   text-align: center;
 
+
 }
+
 
 p {
 font-family: "Bagel Fat One", sans-serif;
   font-size: 25px;
   text-align: center;
 }
+
+
+
 
 
 
@@ -45,7 +52,9 @@ main {
   padding: 20px;
 }
 
+
 /* CSS für Quadrate aus Figma */
+
 
 .variantgelb {
   width: 200px;
@@ -59,6 +68,7 @@ main {
   word-wrap: break-word;
 }
 
+
 .variantpink {
   width: 200px;
   height: 200px;
@@ -70,6 +80,7 @@ main {
   flex-direction: column;
   word-wrap: break-word;
 }
+
 
 .variantorange {
   width: 200px;
@@ -83,6 +94,7 @@ main {
   word-wrap: break-word;
 }
 
+
 .variantblau {
   width: 200px;
   height: 200px;
@@ -94,6 +106,7 @@ main {
   flex-direction: column;
   word-wrap: break-word;
 }
+
 
 .square {
   width: 200px;
@@ -109,7 +122,9 @@ main {
   margin: 10px;
   padding: 30px;
 
+
 }
+
 
 .graybar {
   width: 200px;
@@ -123,6 +138,7 @@ main {
   word-wrap: break-word;
 }
 
+
 .square_container {
   width: 100%;
   display: flex;
@@ -132,7 +148,9 @@ main {
   border-radius: 6px;
   margin: 10px;
 
+
 }
+
 
 .graphics_container {
   width: 100%;
@@ -146,6 +164,7 @@ main {
   margin: 30px;
 }
 
+
 .graybar_parkhaus {
   width: 200px;
   height: 70px;
@@ -158,11 +177,13 @@ main {
   word-wrap: break-word;
 }
 
+
 .Bild_Parkhaus{
   width: 150px;
   border-radius: 20px;
   align-self: center;
 }
+
 
 .parkhaus_box{
   width: 200px;
@@ -179,6 +200,7 @@ main {
   padding: 30px;
 }
 
+
 .parkhaus_container_1 {
   width: 100px;
   display: flex;
@@ -188,7 +210,9 @@ main {
   border-radius: 6px;
   margin: 30px;
 
+
 }
+
 
 .parkhaus_container_2 {
   width: 100px;
@@ -199,7 +223,9 @@ main {
   border-radius: 6px;
   margin: 30px;
 
+
 }
+
 
 .parkhaus_container_3 {
   width: 100px;
@@ -210,7 +236,9 @@ main {
   border-radius: 6px;
   margin: 30px;
 
+
 }
+
 
 .parkhaus_container_4 {
   width: 100px;
@@ -221,15 +249,67 @@ main {
   border-radius: 6px;
   margin: 30px;
 
+
 }
 
-/* CSS für Map*/
 
+/* CSS für Map*/
+/* Aus verlauf eingefügt */
 .map_container {
+  margin: 40px auto;
+  width: 90%;
+  max-width: 1000px;
+}
+
+
+.map_container h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-family: 'Bagel Fat One', sans-serif;
+}
+
+
+#map {
+  height: 500px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Custom Leaflet Marker Styles */
+.custom-parkhaus-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+
+.leaflet-popup-content {
+  margin: 8px 12px !important;
+  line-height: 1.4 !important;
+}
+
+
+.leaflet-popup-content h4 {
+  font-family: "Bagel Fat One", sans-serif !important;
+  font-size: 16px !important;
+  margin: 5px 0 !important;
+}
+
+
+.leaflet-popup-content p {
+  font-family: "Bagel Fat One", sans-serif !important;
+  font-size: 12px !important;
+  margin: 3px 0 !important;
+}
+/* Aus verlauf eingefügt */
+/* .map_container {
   margin: 40px;
   width: 50%;
   max-width: 100px;
-}
+} */
+
+
 
 
 .parkhaus_button
@@ -249,6 +329,8 @@ main {
 }
 
 
+
+
 /* Modernes Overlay System */
 .overlay {
   display: none; /* Initially hidden */
@@ -261,6 +343,7 @@ main {
   z-index: 1000;
   animation: fadeIn 0.3s ease-in-out;
 }
+
 
 .overlay-content {
   position: relative;
@@ -276,6 +359,7 @@ main {
   overflow-y: auto;
 }
 
+
 .overlay-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -286,11 +370,13 @@ main {
   align-items: center;
 }
 
+
 .overlay-header h2 {
   margin: 0;
   font-family: "Bagel Fat One", sans-serif;
   font-size: 24px;
 }
+
 
 .close-button {
   background: none;
@@ -303,14 +389,17 @@ main {
   transition: background-color 0.3s;
 }
 
+
 .close-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
+
 
 .overlay-body {
   padding: 30px;
   font-family: "Bagel Fat One", sans-serif;
 }
+
 
 /* Animationen */
 @keyframes fadeIn {
@@ -318,27 +407,31 @@ main {
   to { opacity: 1; }
 }
 
+
 @keyframes slideIn {
-  from { 
+  from {
     transform: translateY(-50px);
     opacity: 0;
   }
-  to { 
+  to {
     transform: translateY(0);
     opacity: 1;
   }
 }
+
 
 /* Parkhaus-Details Styling */
 .parkhaus-detail {
   text-align: center;
 }
 
+
 .parkhaus-detail h3 {
   color: #333;
   margin: 15px 0;
   font-size: 20px;
 }
+
 
 .parkhaus-detail .status-badge {
   display: inline-block;
@@ -348,15 +441,18 @@ main {
   margin: 10px 0;
 }
 
+
 .status-open {
   background-color: #d4edda;
   color: #155724;
 }
 
+
 .status-closed {
   background-color: #f8d7da;
   color: #721c24;
 }
+
 
 .parkhaus-stats {
   display: grid;
@@ -365,6 +461,7 @@ main {
   margin: 20px 0;
 }
 
+
 .stat-box {
   background-color: #f8f9fa;
   padding: 15px;
@@ -372,16 +469,25 @@ main {
   border-left: 4px solid #667eea;
 }
 
+
 .stat-box h4 {
   margin: 0 0 5px 0;
   color: #333;
   font-size: 14px;
 }
 
+
 .stat-box .value {
   font-size: 24px;
   font-weight: bold;
   color: #667eea;
 }
+
+
+
+
+
+
+
 
 

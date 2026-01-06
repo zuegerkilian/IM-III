@@ -5,48 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IM 3 Parking Stadt St.Gallä</title>
 
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   
-  
+
+
     <!-- Google Font einbinden -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap" rel="stylesheet">
 
-    
+
+    <!-- aus verlauf eingefügt-->
+    <!-- Leaflet CSS -->
+    <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+    />
+    <!-- aus verlauf eingefügt-->
+     
     <link rel="stylesheet" href="style.css">
 
+
 </head>
+
 
 <body>
     <header>
         <h1>Parking Stadt St.Gallen</h1>
     </header>
 
+
     <main>
+
 
         <div class="map_container">
         <div id="map">
-            <img src="images/Karte.PNG" alt="Karte" class="Karte">
+            <!-- <img src="images/Karte.PNG" alt="Karte" class="Karte">-->
         </div>
         </div>
 
+
         <div class="square_container">
+
 
         <div class="square">
         <div class="graybar"><p>Zentrum West</p></div>
         <div class="variantgelb"><h4>/274</h4></div>
         </div>
 
+
         <div class="square">
         <div class="graybar"><p>Klosterviertel</p></div>
         <div class="variantpink"><h4>/143</h4></div>
         </div>
 
+
         <div class="square">
         <div class="graybar"><p>Marktplatz</p></div>
         <div class="variantorange"><h4>/412</h4></div>
         </div>
+
+
 
 
        
@@ -55,9 +76,12 @@
         <div class="variantblau"> <h4>/155</h4></div>
         </div>
 
+
         </div>
 
+
         <div class="graphics_container">
+
 
           <!-- Button Container für Chart-Umschaltung -->
     <div id="buttonContainer" class="button-container">
@@ -65,7 +89,7 @@
         <button id="dailyBtn" class="chart-button">24h Durchschnitt</button>
         <button id="individualBtn" class="chart-button">Einzelne Parkhäuser</button>
     </div>
-    
+   
     <!-- Container für Parkhaus-Auswahl (nur bei Einzelansicht sichtbar) -->
     <div id="parkhausSelector" class="parkhaus-selector" style="display: none;">
         <h3>Parkhaus auswählen:</h3>
@@ -76,14 +100,14 @@
                 <span>Parkhaus Beispiel</span>
             </button>
         </div>
-        
+       
         <!-- Sub-Navigation für Einzelparkhaus-Ansichten -->
         <div id="individualViewButtons" class="individual-view-buttons" style="margin-top: 15px;">
             <button id="weeklyViewBtn" class="view-btn active">Wöchentlich</button>
             <button id="hourlyViewBtn" class="view-btn">24h Detail</button>
         </div>
     </div>
-    
+   
     <!-- Einzelner Chart Container -->
     <div class="chart-section">
         <h2 id="chartTitle">Wöchentliche Durchschnittsbelegung</h2>
@@ -91,30 +115,34 @@
     </div>
 
 
+
+
         </div>
+
 
         <div class="parkhaus_container_1">
 
+
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="openParkhausOverlay('Parkhaus Neumarkt', 'P001')">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Neumarkt', 'P21')">
                 <img src="images/p21.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                 <div class="graybar_parkhaus">
                  <p>Parkhaus Neumarkt</p>
                   </div>
                  </button>
             </div>
-    
+   
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="openParkhausOverlay('Parkhaus Rathaus', 'P002')">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Rathaus', 'P22')">
                 <img src="images/p22.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                 <div class="graybar_parkhaus">
                   <p>Parkhaus Rathaus</p>
                      </div>
                 </button>
             </div>
-    
+   
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="openParkhausOverlay('Parkhaus Manor', 'P003')">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Manor', 'P23')">
                 <img src="images/p23.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                   <div class="graybar_parkhaus">
                   <p>Parkhaus Manor</p>
@@ -123,23 +151,27 @@
             </div>
                            
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Bahnhof', 'P24')">
                 <img src="images/p24.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                  <div class="graybar_parkhaus">
                 <p>Cityparking Bahnhof</p>
                  </div>
                 </button>
             </div>
-    
+   
             </div>
 
 
 
-        
+
+
+
+       
         <div class="parkhaus_container_2">
 
+
         <div class="parkhaus_box">
-            <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+            <button class="parkhaus_button" onclick="openParkhausOverlay('Kreuzbleiche', 'P25')">
             <img src="images/p25.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
             <div class="graybar_parkhaus">
              <p>Parkplatz Kreuzbleiche</p>
@@ -147,8 +179,9 @@
              </button>
         </div>
 
+
         <div class="parkhaus_box">
-            <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+            <button class="parkhaus_button" onclick="openParkhausOverlay('Oberer Graben', 'P31')">
             <img src="images/p31.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
             <div class="graybar_parkhaus">
               <p>Parkhaus Oberer Graben</p>
@@ -156,8 +189,9 @@
             </button>
         </div>
 
+
         <div class="parkhaus_box">
-            <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+            <button class="parkhaus_button" onclick="openParkhausOverlay('Raiffeisen', 'P32')">  
             <img src="images/p32.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
               <div class="graybar_parkhaus">
               <p>Parkhaus Raiffeisen</p>
@@ -166,7 +200,7 @@
         </div>
                        
         <div class="parkhaus_box">
-            <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+            <button class="parkhaus_button" onclick="openParkhausOverlay('Einstein', 'P33')">
             <img src="images/p33.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
              <div class="graybar_parkhaus">
             <p>Parkhaus Einstein</p>
@@ -174,13 +208,16 @@
             </button>
         </div>
 
+
         </div>
 
-        
+
+       
         <div class="parkhaus_container_3">
 
+
         <div class="parkhaus_box">
-            <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+            <button class="parkhaus_button" onclick="openParkhausOverlay('Unterer Graben', 'P41')">
             <img src="images/p41.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
             <div class="graybar_parkhaus">
              <p>Unterer Graben</p>
@@ -188,8 +225,9 @@
              </button>
         </div>
 
+
         <div class="parkhaus_box">
-            <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+            <button class="parkhaus_button" onclick="openParkhausOverlay('Bruggraben', 'P42')">
             <img src="images/p42.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
             <div class="graybar_parkhaus">
               <p>Cityparking Bruggraben</p>
@@ -197,8 +235,9 @@
             </button>
         </div>
 
+
         <div class="parkhaus_box">
-            <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+            <button class="parkhaus_button" onclick="openParkhausOverlay('Spisertor', 'P43')">
             <img src="images/p43.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
               <div class="graybar_parkhaus">
               <p>Parkhaus Spisertor</p>
@@ -207,7 +246,7 @@
         </div>
                        
         <div class="parkhaus_box">
-            <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+            <button class="parkhaus_button" onclick="openParkhausOverlay('Brühltor', 'P44')">
             <img src="images/p44.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
              <div class="graybar_parkhaus">
             <p>Cityparking Brühltor</p>
@@ -215,32 +254,36 @@
             </button>
         </div>
 
+
         </div>
         </div>
+
+
 
 
         <div class="parkhaus_container_4">
 
+
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Stadtpark AZSG', 'P51')">
                 <img src="images/p51.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                 <div class="graybar_parkhaus">
                  <p>Stadtpark/AZSG</p>
                   </div>
                  </button>
             </div>
-    
+   
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('Spelteriniplatz', 'P52')">
                 <img src="images/p52.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                 <div class="graybar_parkhaus">
                   <p>Parkplatz Spelteriniplatz</p>
                      </div>
                 </button>
             </div>
-    
+   
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('OLMA Parkplatz', 'P53')">
                 <img src="images/p53.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                   <div class="graybar_parkhaus">
                   <p>Parkplatz OLMA</p>
@@ -249,18 +292,19 @@
             </div>
                            
             <div class="parkhaus_box">
-                <button class="parkhaus_button" onclick="window.location.href='detail.html'">
+                <button class="parkhaus_button" onclick="openParkhausOverlay('OLMA Messen', 'P54')">
                 <img src="images/p54.png" alt="Bild_Parkhaus" class="Bild_Parkhaus">
                  <div class="graybar_parkhaus">
                 <p>OLMA Messen</p>
                  </div>
                 </button>
             </div>
-    
+   
             </div>
-    
-        
+   
+       
     </main>
+
 
     <!-- Overlay für Parkhaus-Details -->
     <div id="parkhausOverlay" class="overlay">
@@ -276,6 +320,13 @@
             </div>
         </div>
     </div>
-  
+
+
+    <!-- Leaflet JS (nach Body, vor App-Script) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="scripts.js"></script>
+
+
 </body>
 </html>
+
