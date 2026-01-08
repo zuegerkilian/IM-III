@@ -408,11 +408,11 @@ function addParkhausMarkers() {
        
         marker.bindPopup(popupContent);
 
+        // Click-Handler für Marker, um Overlay zu öffnen
         marker.on('click', () => {
-    // Name aus Daten, sonst phid als Fallback
-    const name = parkhaus.phname || parkhaus.phid;
-    openParkhausOverlay(name, parkhaus.phid);
-});
+            const name = parkhaus.phname || parkhaus.phid;
+            openParkhausOverlay(name, parkhaus.phid);
+        });
     });
    
     console.log(`${parkhausMap.size} Parkhaus-Marker zur Karte hinzugefügt`);
