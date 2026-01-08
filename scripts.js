@@ -1,116 +1,586 @@
-console.log("Parking Dashboard gestartet");
+console.log("Parkhaus Dashboard gestartet");
 
-let map = null;
+
+
+
+// ==================== GLOBALE VARIABLEN ====================
 let currentChart = null;
-let overlayChart = null;
+let allDataCache = null;
+let currentView = 'weekly';
+let individualView = 'weekly';
 let selectedParkhaus = null;
+let availableParkhaeuser = [];
+let map = null; // Karten-Variable
 
-// ==================== MARKER ====================
-const parkhausLocations = [
-    { coords: [47.4218, 9.37090], title: "P21 Neumarkt" },
-    { coords: [47.4245, 9.37122], title: "P22 Rathaus" },
-    { coords: [47.4238, 9.37271], title: "P23 Manor" },
-    { coords: [47.4228, 9.36713], title: "P24 Bahnhof" },
-    { coords: [47.4222, 9.37465], title: "P31 Oberer Graben" },
-    { coords: [47.4208, 9.3767], title: "P32 Raiffeisen" },
-    { coords: [47.4218, 9.37422], title: "P33 Einstein" },
-    { coords: [47.4202, 9.37234], title: "P25 Kreuzbleiche" },
-    { coords: [47.4281, 9.37578], title: "P41 Unterer Graben" },
-    { coords: [47.4254, 9.37929], title: "P42 Bruggraben" },
-    { coords: [47.4240, 9.37928], title: "P43 Spisertor" },
-    { coords: [47.4271, 9.37797], title: "P44 Brühltor" },
-    { coords: [47.4176, 9.3548], title: "P51 Stadtpark/AZSG" },
-    { coords: [47.4293, 9.38046], title: "P52 Spelteriniplatz" },
-    { coords: [47.4309, 9.38182], title: "P53 OLMA" },
-    { coords: [47.4311, 9.38366], title: "P54 OLMA Messen" }
-];
 
-// ==================== MAP INITIALIZATION ====================
-function initializeMap() {
-    map = L.map('map').setView([47.4245, 9.3767], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap-Mitwirkende'
-    }).addTo(map);
 
-    parkhausLocations.forEach(loc => {
-        const marker = L.marker(loc.coords).addTo(map)
-            .bindPopup(`<b>${loc.title}</b>`);
-        marker.on('click', () => {
-            selectedParkhaus = loc.title;
-            openParkhausOverlay(loc.title);
-            createDashboardChart('weekly', loc.title);
-        });
-    });
-}
+// ==================== OVERLAY-FUNKTIONEN ====================
+function openParkhausOverlay(parkhausName, parkhausId) {
+    console.log(`Öffne Overlay für: ${parkhausName} (${parkhausId})`);
 
-// ==================== OVERLAY ====================
-function openParkhausOverlay(name) {
-    document.getElementById('overlayTitle').textContent = name;
-    document.getElementById('parkhausOverlay').style.display = 'flex';
+
+
+
+   
+    // Overlay-Titel setzen
+    document.getElementById('overlayTitle').textContent = parkhausName;
+   
+    // Daten für das spezielle Parkhaus laden
+    loadParkhausDetails(parkhausId, parkhausName);
+   
+    // Overlay anzeigen
+    document.getElementById('parkhausOverlay').style.display = 'block';
+   
+    // Körper-Scrolling deaktivieren
     document.body.style.overflow = 'hidden';
-
-    const overlayContent = document.getElementById('overlayContent');
-    overlayContent.innerHTML = `
-        <p>Daten für <strong>${name}</strong>:</p>
-        <canvas id="overlayChart"></canvas>
-        <div class="overlay-chart-buttons">
-            <button id="overlayWeeklyBtn" class="active" onclick="switchOverlayChart('weekly')">Woche</button>
-            <button id="overlayDailyBtn" onclick="switchOverlayChart('daily')">24h</button>
-        </div>
-    `;
-    createOverlayChart('weekly');
 }
+
+
+
 
 function closeOverlay() {
+    console.log("Schließe Overlay");
+   
+    // Overlay verstecken
     document.getElementById('parkhausOverlay').style.display = 'none';
+   
+    // Körper-Scrolling wieder aktivieren
     document.body.style.overflow = 'auto';
-    if (overlayChart) overlayChart.destroy();
 }
 
-function switchOverlayChart(view) {
-    document.getElementById('overlayWeeklyBtn').classList.toggle('active', view==='weekly');
-    document.getElementById('overlayDailyBtn').classList.toggle('active', view==='daily');
-    createOverlayChart(view);
+
+
+
+function loadParkhausDetails(parkhausId, parkhausName) {
+    const overlayContent = document.getElementById('overlayContent');
+
+
+
+
+   
+    // Loading-Zustand anzeigen
+    overlayContent.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+            <p>Lade Parkhaus-Details...</p>
+        </div>
+    `;
+   
+    // API-Call für spezifische Parkhaus-Daten
+    fetch(`https://im3-projekt.wanderpodcastecho.ch/unload.php?phid=${parkhausId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                displayParkhausDetails(data, parkhausName);
+            } else {
+                displayDemoParkhausDetails(parkhausId, parkhausName);
+            }
+        })
+        .catch(error => {
+            console.error('Fehler beim Laden der Parkhaus-Details:', error);
+            displayDemoParkhausDetails(parkhausId, parkhausName);
+        });
 }
 
-function createOverlayChart(view) {
-    const ctx = document.getElementById('overlayChart').getContext('2d');
-    if (overlayChart) overlayChart.destroy();
 
-    const labels = view==='weekly' ? ['Mo','Di','Mi','Do','Fr','Sa','So'] : ['0','4','8','12','16','20'];
-    const data = labels.map(()=>Math.floor(Math.random()*100));
 
-    overlayChart = new Chart(ctx, {
-        type: view==='weekly' ? 'bar' : 'line',
-        data: { labels, datasets:[{label:'Belegung (%)',data,backgroundColor:'rgba(102,126,234,0.6)',borderColor:'#667eea',borderWidth:2,fill:true}] },
-        options: { responsive:true, maintainAspectRatio:false }
-    });
+
+function displayParkhausDetails(data, parkhausName) {
+    const latestData = data[0]; // Neueste Daten
+    const overlayContent = document.getElementById('overlayContent');
+   
+    const isOpen = latestData.phstate === 'offen';
+    const freePlaces = latestData.shortfree || 0;
+    const occupancyPercent = latestData.belegung_prozent || 0;
+    const totalPlaces = latestData.shortmax || 'N/A';
+    const address = latestData.adresse || 'Adresse nicht verfügbar';
+   
+    overlayContent.innerHTML = `
+        <div class="parkhaus-detail">
+            <img src="images/IMG_0310.PNG" alt="${parkhausName}" style="width: 200px; border-radius: 15px; margin: 20px 0;">
+           
+            <div class="status-badge ${isOpen ? 'status-open' : 'status-closed'}">
+                ${isOpen ? '🟢 Geöffnet' : '🔴 Geschlossen'}
+            </div>
+           
+            <div class="parkhaus-stats">
+                <div class="stat-box">
+                    <h4>Freie Plätze</h4>
+                    <div class="value">${freePlaces}</div>
+                </div>
+                <div class="stat-box">
+                    <h4>Belegung</h4>
+                    <div class="value">${occupancyPercent.toFixed(1)}%</div>
+                </div>
+                <div class="stat-box">
+                    <h4>Gesamt Plätze</h4>
+                    <div class="value">${totalPlaces}</div>
+                </div>
+                <div class="stat-box">
+                    <h4>Verfügbarkeit</h4>
+                    <div class="value">${((totalPlaces - freePlaces) / totalPlaces * 100).toFixed(0)}%</div>
+                </div>
+            </div>
+           
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #333;">📍 Standort</h4>
+                <p style="margin: 0; color: #666; font-size: 14px;">${address}</p>
+            </div>
+           
+            <div style="margin: 20px 0;">
+                <button onclick="closeOverlay()" style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    border: none;
+                    padding: 12px 30px;
+                    border-radius: 25px;
+                    font-family: 'Bagel Fat One', sans-serif;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: transform 0.2s;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    Schließen
+                </button>
+            </div>
+        </div>
+    `;
 }
 
-// ==================== DASHBOARD ====================
-function createDashboardChart(view='weekly', parkhausName='Alle Parkhäuser') {
-    document.getElementById('dashboardTitle').textContent = `Belegung: ${parkhausName}`;
-    const ctx = document.getElementById('mainChart').getContext('2d');
-    if (currentChart) currentChart.destroy();
 
-    const labels = view==='weekly' ? ['Mo','Di','Mi','Do','Fr','Sa','So'] : ['0','4','8','12','16','20'];
-    const data = labels.map(()=>Math.floor(Math.random()*100));
 
-    currentChart = new Chart(ctx, {
-        type: view==='weekly' ? 'bar':'line',
-        data:{ labels, datasets:[{label:'Belegung (%)',data,backgroundColor:'rgba(102,126,234,0.6)',borderColor:'#667eea',borderWidth:2,fill:true}] },
-        options:{ responsive:true, maintainAspectRatio:false }
-    });
+
+function displayDemoParkhausDetails(parkhausId, parkhausName) {
+    const overlayContent = document.getElementById('overlayContent');
+    if (!overlayContent) {
+        console.error('Overlay-Container fehlt, kann Fehlerhinweis nicht anzeigen.');
+        return;
+    }
+
+
+
+
+    // Fallback-Anzeige bei Ladefehler oder fehlenden Daten
+    overlayContent.innerHTML = `
+        <div class="parkhaus-detail">
+            <img src="images/IMG_0310.PNG" alt="${parkhausName}" style="width: 200px; border-radius: 15px; margin: 20px 0;">
+
+
+
+
+            <div class="status-badge status-closed">
+                🔴 Daten konnten nicht geladen werden
+            </div>
+
+
+
+
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #333;">Fehler</h4>
+                <p style="margin: 0; color: #666; font-size: 14px;">Für ${parkhausName} (${parkhausId}) liegen aktuell keine Live-Daten vor.</p>
+            </div>
+
+
+
+
+            <div style="margin: 20px 0;">
+                <button onclick="closeOverlay()" style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    border: none;
+                    padding: 12px 30px;
+                    border-radius: 25px;
+                    font-family: 'Bagel Fat One', sans-serif;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: transform 0.2s;
+                    margin-right: 10px;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    Schließen
+                </button>
+               
+                <button onclick="showOnMap('${parkhausId}')" style="
+                    background: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 12px 30px;
+                    border-radius: 25px;
+                    font-family: 'Bagel Fat One', sans-serif;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: transform 0.2s;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    Auf Karte zeigen
+                </button>
+            </div>
+        </div>
+    `;
 }
 
-// ==================== INIT ====================
-document.addEventListener('DOMContentLoaded', () => {
-    initializeMap();
-    createDashboardChart();
 
-    document.getElementById('weeklyBtn').addEventListener('click', () => createDashboardChart('weekly', selectedParkhaus || 'Alle Parkhäuser'));
-    document.getElementById('dailyBtn').addEventListener('click', () => createDashboardChart('daily', selectedParkhaus || 'Alle Parkhäuser'));
+
+
+function showOnMap(parkhausId) {
+    closeOverlay();
+    // Scroll zur Karte
+    document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
+    console.log(`Zeige ${parkhausId} auf der Karte`);
+}
+
+
+
+
+// Event-Listener für ESC-Taste zum Schließen des Overlays
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeOverlay();
+    }
 });
-//hallo//
+
+
+
+
+// Event-Listener für Klick außerhalb des Overlay-Inhalts
+document.getElementById('parkhausOverlay')?.addEventListener('click', function(event) {
+    if (event.target === this) {
+        closeOverlay();
+    }
+});
+
+
+
+
+
+
+
+
+// aus verlauf eingefügt
+
+
+
+
+// ==================== INITIALISIERUNG ====================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM geladen - initialisiere Karte und Dashboard");
+   
+    // Karte initialisieren
+    initializeMap();
+   
+    // Daten laden
+    loadDashboardData();
+});
+
+
+
+
+// ==================== KARTEN-FUNKTIONEN ====================
+function initializeMap() {
+    try {
+        if (typeof L === 'undefined') {
+            console.warn('Leaflet JS wurde nicht geladen. Karte wird nicht initialisiert.');
+            return;
+        }
+        const mapElement = document.getElementById('map');
+        if (!mapElement) {
+            console.warn('Karten-Element nicht gefunden');
+            return;
+        }
+
+
+
+
+        // St. Gallen Koordinaten
+        const stGallenCoords = [47.4245, 9.3767];
+
+
+
+
+        // Karte initialisieren
+        map = L.map('map').setView(stGallenCoords, 13);
+
+
+
+
+        // OpenStreetMap-Tiles hinzufügen
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© <a href="https://www.openstreetmap.org/">OpenStreetMap</a>-Mitwirkende',
+        }).addTo(map);
+
+
+
+
+        // Marker für St. Gallen Stadtzentrum
+        const marker = L.marker(stGallenCoords).addTo(map);
+        marker.bindPopup('<b>St. Gallen</b><br>Stadtzentrum').openPopup();
+
+
+
+
+        // Maßstabsleiste hinzufügen
+        L.control.scale().addTo(map);
+
+
+
+
+        console.log("Karte erfolgreich initialisiert");
+       
+        // Parkhaus-Marker hinzufügen wenn Daten verfügbar
+        if (allDataCache) {
+            addParkhausMarkers();
+        }
+    } catch (error) {
+        console.error('Fehler bei der Karten-Initialisierung:', error);
+    }
+}
+
+
+
+
+function loadDashboardData() {
+    console.log("===== LADE DASHBOARD-DATEN =====");
+    fetch('https://im3-projekt.wanderpodcastecho.ch/unload.php')
+        .then(response => {
+            console.log("API Response Status:", response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Daten geladen:", data.length, "Einträge");
+            allDataCache = data;
+            extractAvailableParkhaeuser(data);
+           
+            // Parkhaus-Marker zur Karte hinzufügen
+            if (map) {
+                addParkhausMarkers();
+            }
+           
+            // Dashboard nur initialisieren wenn Chart-Element existiert
+            const chartElement = document.getElementById('mainChart');
+            console.log("Canvas Element gefunden:", !!chartElement);
+            console.log("Chart.js geladen:", typeof Chart !== 'undefined');
+           
+            if (chartElement) {
+                console.log("Starte Chart-Erstellung...");
+                createWeeklyAverageChart(data);
+                setupMainEventListeners();
+            } else {
+                console.warn("FEHLER: mainChart Canvas nicht gefunden!");
+            }
+        })
+        .catch(error => {
+            console.error('Fehler beim Laden der Daten:', error);
+        });
+}
+
+
+
+
+function addParkhausMarkers() {
+    if (!map || !allDataCache) return;
+   
+    // Eindeutige Parkhäuser mit Koordinaten finden
+    const parkhausMap = new Map();
+   
+    allDataCache.forEach(entry => {
+        if (entry.phid && entry.lon && entry.lat && !parkhausMap.has(entry.phid)) {
+            parkhausMap.set(entry.phid, {
+                phid: entry.phid,
+                phname: entry.phname || entry.phid,
+                lat: parseFloat(entry.lat),
+                lon: parseFloat(entry.lon),
+                phstate: entry.phstate,
+                shortfree: entry.shortfree,
+                belegung_prozent: entry.belegung_prozent
+            });
+        }
+    });
+   
+    // Marker für jedes Parkhaus hinzufügen
+    parkhausMap.forEach(parkhaus => {
+        const isOpen = parkhaus.phstate === 'offen';
+        const markerColor = isOpen ? 'green' : 'red';
+       
+        // Custom Icon basierend auf Status
+        const icon = L.divIcon({
+            className: 'custom-parkhaus-marker',
+            html: `<div style="
+                background-color: ${markerColor};
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: 2px solid white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            "></div>`,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+       
+        const marker = L.marker([parkhaus.lat, parkhaus.lon], { icon }).addTo(map);
+       
+        // Popup mit Parkhaus-Informationen
+        const popupContent = `
+            <div style="font-family: 'Bagel Fat One', sans-serif; text-align: center;">
+                <h4 style="margin: 5px 0; color: #333;">${parkhaus.phname}</h4>
+                <p style="margin: 3px 0; color: ${isOpen ? 'green' : 'red'}; font-weight: bold;">
+                    ${isOpen ? 'Geöffnet' : 'Geschlossen'}
+                </p>
+                ${isOpen && parkhaus.shortfree !== null ? `
+                    <p style="margin: 3px 0; color: #666;">
+                        Freie Plätze: <strong>${parkhaus.shortfree}</strong>
+                    </p>
+                    <p style="margin: 3px 0; color: #666;">
+                        Belegung: <strong>${(parkhaus.belegung_prozent || 0).toFixed(1)}%</strong>
+                    </p>
+                ` : ''}
+            </div>
+        `;
+       
+        marker.bindPopup(popupContent);
+    });
+   
+    console.log(`${parkhausMap.size} Parkhaus-Marker zur Karte hinzugefügt`);
+}
+// ==================== DASHBOARD-UTILS (fehlende Funktionen ergänzt) ====================
+function extractAvailableParkhaeuser(data) {
+    if (!Array.isArray(data)) {
+        console.warn('extractAvailableParkhaeuser: data ist kein Array');
+        return;
+    }
+    // Speichert eindeutige Parkhaus-IDs für spätere Buttons/Filter
+    availableParkhaeuser = [...new Set(data.map(item => item.phid).filter(Boolean))];
+    console.log('Verfügbare Parkhäuser:', availableParkhaeuser.length);
+}
+
+
+
+
+function createWeeklyAverageChart(data) {
+    const canvas = document.getElementById('mainChart');
+    if (!canvas || !canvas.getContext) {
+        console.warn('createWeeklyAverageChart: mainChart Canvas fehlt');
+        return;
+    }
+    if (!Array.isArray(data) || data.length === 0) {
+        console.warn('createWeeklyAverageChart: keine Daten vorhanden');
+        return;
+    }
+
+
+
+
+    // Einfache Demo-Auswertung: durchschnittliche Belegung pro Tag (nach Datum gruppiert)
+    const perDay = {};
+    data.forEach(row => {
+        const day = (row.created_at || '').slice(0, 10);
+        if (!day) return;
+        perDay[day] = perDay[day] || { sum: 0, count: 0 };
+        perDay[day].sum += Number(row.belegung_prozent) || 0;
+        perDay[day].count += 1;
+    });
+
+
+
+
+    const labels = Object.keys(perDay).sort();
+    const values = labels.map(day => perDay[day].count ? perDay[day].sum / perDay[day].count : 0);
+
+
+
+
+    if (currentChart) {
+        currentChart.destroy();
+    }
+
+
+
+
+    currentChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Ø Belegung (%)',
+                data: values,
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102,126,234,0.2)',
+                tension: 0.2,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true, max: 100 }
+            }
+        }
+    });
+    console.log('Chart aktualisiert (wöchentliche Ansicht)');
+}
+
+
+
+
+function setupMainEventListeners() {
+    // Schützt vor doppelter Registrierung
+    if (setupMainEventListeners._initialized) return;
+
+
+
+
+    const weeklyBtn = document.getElementById('weeklyBtn');
+    const dailyBtn = document.getElementById('dailyBtn');
+    const individualBtn = document.getElementById('individualBtn');
+
+
+
+
+    if (weeklyBtn) {
+        weeklyBtn.addEventListener('click', () => {
+            currentView = 'weekly';
+            createWeeklyAverageChart(allDataCache || []);
+        });
+    }
+
+
+
+
+    if (dailyBtn) {
+        dailyBtn.addEventListener('click', () => {
+            currentView = 'daily';
+            // Placeholder: könnte auf Stundenmittel umstellen
+            createWeeklyAverageChart(allDataCache || []);
+        });
+    }
+
+
+
+
+    if (individualBtn) {
+        individualBtn.addEventListener('click', () => {
+            currentView = 'individual';
+            // Placeholder: hier könnte Einzelparkhaus-Auswahl aktiviert werden
+            createWeeklyAverageChart(allDataCache || []);
+        });
+    }
+
+
+
+
+    setupMainEventListeners._initialized = true;
+    console.log('Event-Listener für Dashboard gesetzt');
+}
+// aus verlauf eingefügt (bereinigt):
+// Ungültige Selektoren entfernt, da es keine Elemente mit diesen IDs gibt.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
