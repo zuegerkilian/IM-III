@@ -18,17 +18,30 @@
 // Bindet das Skript extract.php für Rohdaten ein und speichere es in $data
 $data = include('extract.php');
 
-// echo "<pre>";
-// print_r($data);
-// echo "</pre>";
-
 if ($data === null) {
     die("Fehler beim Laden der Daten.\n");
 }
 
-$parkhaeuser_data = $data['results'] ?? [];
-$transformedData = [];
+// DEBUG
+echo "DEBUG: Typ von \$data = " . gettype($data) . "\n";
+echo "DEBUG: Länge = " . strlen($data) . "\n";
 
+// extract.php liefert JSON-String, also immer dekodieren
+$json_decoded = json_decode($data, true);
+
+if ($json_decoded === null) {
+    die("FEHLER: JSON konnte nicht dekodiert werden.\n");
+}
+
+// Die API liefert die Daten unter dem Schlüssel 'results'
+$parkhaeuser_data = $json_decoded['results'] ?? [];
+
+if (empty($parkhaeuser_data)) {
+    echo "WARNUNG: Keine Daten unter 'results' gefunden. Total: " . ($json_decoded['total_count'] ?? 0) . "\n";
+    $parkhaeuser_data = [];
+}
+
+$transformedData = [];
 
 // Transformiert und fügt die notwendigen Informationen hinzu
 foreach ($parkhaeuser_data as $parkhaus) {

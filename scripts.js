@@ -152,7 +152,10 @@ function displayParkhausDetails(data, parkhausName) {
     // Initial den wöchentlichen Chart für dieses Parkhaus laden
     setTimeout(() => {
         if (allDataCache) {
-            createWeeklyChart(allDataCache, 'overlayChart', phid);
+            if (overlayChart) {
+                overlayChart.destroy();
+            }
+            overlayChart = createWeeklyChart(allDataCache, 'overlayChart', phid);
         }
     }, 100);
 }
@@ -486,7 +489,7 @@ function create24HourChart(data, canvasId = 'mainChart', phidFilter = null) {
                 day: '2-digit', 
                 month: '2-digit', 
                 hour: '2-digit'
-            }) + ' Uhr';
+            }) ;
         } catch (e) {
             return hourKey;
         }
