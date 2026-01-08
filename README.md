@@ -5,6 +5,7 @@
 
 
 Projektname
+Parking Stadt St.Gallen
 
 FHGR-Email, Vor- und Nachname aller Gruppenmitglieder
 kilian.zueger@stud.fhgr.ch, Kilian Züger
