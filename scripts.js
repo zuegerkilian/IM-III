@@ -295,9 +295,94 @@ function initializeMap() {
         }).addTo(map);
 
 
-        // Marker für St. Gallen Stadtzentrum
-        const marker = L.marker(stGallenCoords).addTo(map);
-        marker.bindPopup('<b>St. Gallen</b><br>Stadtzentrum').openPopup();
+        const locations = [
+            {
+              coords: [47.4218, 9.37090],
+              title: "P21 Neumarkt",
+              text: "Parkhaus"
+            },
+            {
+              coords: [47.4245, 9.37122],
+              title: "P22 Rathaus",
+              text: "Parkhaus"
+            },
+            {
+              coords: [47.4238, 9.37271],
+              title: "P23 Manor",
+              text: "Parkhaus"
+            },  {
+                coords: [47.4228, 9.36713],
+                title: "P24 Bahnhof",
+                text: "Cityparking"
+              },
+            {
+                coords: [47.4222, 9.37465],
+                title: "P31 Oberer Graben",
+                text: "Parkhaus"
+              },
+              {
+                coords: [47.4208, 9.3767],
+                title: "P32 Raiffeisen",
+                text: "Parkhaus"
+              },
+              {
+                coords: [47.4218, 9.37422],
+                title: "P33 Einstein",
+                text: "Parkhaus"
+              },
+              {
+                coords: [47.4202, 9.37234],
+                title: "P25 Kreuzbleiche",
+                text: "Parkplatz"
+              },
+              {
+                coords: [47.4281, 9.37578],
+                title: "P41 Unterer Graben",
+                text: "Parkplatz"
+              },
+              {
+                  coords: [47.4254, 9.37929],
+                  title: "P42 Bruggraben",
+                  text: "Cityparking"
+                },
+                {
+                    coords: [47.4240, 9.37928],
+                    title: "P43 Spisertor",
+                    text: "Parkhaus"
+                  },
+                  {
+                    coords: [47.4271, 9.37797],
+                    title: "P44 Brühltor",
+                    text: "Cityparking"
+                  },
+                  {
+                    coords: [47.4176, 9.3548],
+                    title: "P51 Stadtpark/AZSG",
+                    text: "Parkplatz"
+                  },
+                  {
+                      coords: [47.4293, 9.38046],
+                      title: "P52 Spelteriniplatz",
+                      text: "Parkplatz"
+                    },
+                    {
+                        coords: [47.4309, 9.38182],
+                        title: "P53 OLMA",
+                        text: "Parkplatz"
+                      },  {
+                        coords: [47.4311, 9.38366],
+                        title: "P54 OLMA Messen",
+                        text: "Parkhaus"
+                      }
+                      
+          ];
+          
+          locations.forEach(loc => {
+            L.marker(loc.coords)
+              .addTo(map)
+              .bindPopup(`<b>${loc.title}</b><br>${loc.text}`);
+          });
+          
 
 
         // Maßstabsleiste hinzufügen
