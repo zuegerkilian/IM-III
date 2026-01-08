@@ -92,8 +92,7 @@ function displayParkhausDetails(data, parkhausName) {
     const isOpen = latestData.phstate === 'offen';
     const freePlaces = latestData.shortfree || 0;
     const occupancyPercent = latestData.belegung_prozent || 0;
-    const totalPlaces = latestData.shortmax || 'N/A';
-    const address = latestData.adresse || 'Adresse nicht verfügbar';
+    const totalPlaces = latestData.shortmax ?? 0;
    
     overlayContent.innerHTML = `
         <div class="parkhaus-detail">
@@ -118,13 +117,8 @@ function displayParkhausDetails(data, parkhausName) {
                 </div>
                 <div class="stat-box">
                     <h4>Verfügbarkeit</h4>
-                    <div class="value">${((totalPlaces - freePlaces) / totalPlaces * 100).toFixed(0)}%</div>
+                    <div class="value">${(100 - occupancyPercent).toFixed(1)}%</div>
                 </div>
-            </div>
-           
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin: 20px 0;">
-                <h4 style="margin: 0 0 10px 0; color: #333;">📍 Standort</h4>
-                <p style="margin: 0; color: #666; font-size: 14px;">${address}</p>
             </div>
            
             <div style="margin: 20px 0;">
