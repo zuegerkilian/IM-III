@@ -113,3 +113,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('weeklyBtn').addEventListener('click', () => createDashboardChart('weekly', selectedParkhaus || 'Alle Parkhäuser'));
     document.getElementById('dailyBtn').addEventListener('click', () => createDashboardChart('daily', selectedParkhaus || 'Alle Parkhäuser'));
 });
+//hallo//
