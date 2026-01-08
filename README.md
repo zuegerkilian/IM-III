@@ -35,4 +35,4 @@ Eine der grössten Herausforderungen war die ungewohnte Schreibweise und Logik d
 
 genutzten Ressourcen
 ChatGPT, VS Co-Pilot und Gemini halfen wenn wir nicht mehr weiterkammen – insbesondere beim Überprüfen des Codes oder beim Debugging.
- 
+

@@ -442,24 +442,38 @@ function create24HourChart(data, canvasId = 'mainChart', phidFilter = null) {
     // Filtere nach Parkhaus wenn phidFilter gesetzt ist
     const filteredData = phidFilter ? data.filter(row => row.phid === phidFilter) : data;
 
-    // Datenpunkte der letzten 24 Stunden
-    const now = new Date();
-    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    // Finde neuestes Datum in den Daten
+    const dates = filteredData.map(row => new Date(row.created_at)).filter(d => !isNaN(d));
+    if (dates.length === 0) {
+        console.warn('24h Chart: Keine gültigen Datumswerte gefunden');
+        return;
+    }
+    
+    const latestDate = new Date(Math.max(...dates));
+    const dayBeforeLatest = new Date(latestDate.getTime() - 24 * 60 * 60 * 1000);
+    
+    console.log('24h Chart - Neuestes Datum:', latestDate.toISOString());
+    console.log('24h Chart - Zeitraum:', dayBeforeLatest.toISOString(), 'bis', latestDate.toISOString());
+    console.log('24h Chart - Gefilterte Daten:', filteredData.length);
     
     const recent24h = filteredData.filter(row => {
         const rowDate = new Date(row.created_at);
-        return rowDate >= yesterday && rowDate <= now;
+        return rowDate >= dayBeforeLatest && rowDate <= latestDate;
     });
+    
+    console.log('24h Chart - Daten im Zeitraum:', recent24h.length);
 
     // Gruppierung nach Stunde
     const perHour = {};
     recent24h.forEach(row => {
         const hour = (row.created_at || '').slice(0, 13); // YYYY-MM-DD HH
-        if (!hour) return;
+        if (!hour || hour.length < 13) return;
         perHour[hour] = perHour[hour] || { sum: 0, count: 0 };
         perHour[hour].sum += Number(row.belegung_prozent) || 0;
         perHour[hour].count += 1;
     });
+    
+    console.log('24h Chart - Stunden gruppiert:', Object.keys(perHour).length);
 
     // Sortiere nach Zeit und erstelle Labels
     const sortedHours = Object.keys(perHour).sort();
