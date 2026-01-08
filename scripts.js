@@ -587,7 +587,7 @@ function createWeeklyChart(data, canvasId = 'mainChart', phidFilter = null) {
         perDay[day].count += 1;
     });
 
-    // Sortiere nach Datum und erstelle Labels
+    // Sortiere nach Datum und erstelle die Labels
     const sortedDays = Object.keys(perDay).sort();
     const labels = sortedDays.map(day => {
         const date = new Date(day);
