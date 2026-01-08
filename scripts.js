@@ -78,7 +78,7 @@ function displayParkhausDetails(data, parkhausName) {
     const isOpen = latestData.phstate === 'offen';
     const freePlaces = latestData.shortfree || 0;
     const occupancyPercent = latestData.belegung_prozent || 0;
-    const totalPlaces = latestData.shortmax || 'N/A';
+    const totalPlaces = latestData.shortmax ?? 0;
     const address = latestData.adresse || 'Adresse nicht verfügbar';
    
     overlayContent.innerHTML = `
@@ -104,7 +104,7 @@ function displayParkhausDetails(data, parkhausName) {
                 </div>
                 <div class="stat-box">
                     <h4>Verfügbarkeit</h4>
-                    <div class="value">${((totalPlaces - freePlaces) / totalPlaces * 100).toFixed(0)}%</div>
+                    <div class="value">${((100 - occupancyPercent).toFixed(1))}%</div>
                 </div>
             </div>
            
@@ -381,6 +381,12 @@ function addParkhausMarkers() {
         `;
        
         marker.bindPopup(popupContent);
+
+        marker.on('click', () => {
+    // Name aus Daten, sonst phid als Fallback
+    const name = parkhaus.phname || parkhaus.phid;
+    openParkhausOverlay(name, parkhaus.phid);
+});
     });
    
     console.log(`${parkhausMap.size} Parkhaus-Marker zur Karte hinzugefügt`);

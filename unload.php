@@ -51,6 +51,7 @@ try {
                 p.phstate,
                 p.shortfree,
                 p.belegung_prozent,
+                ps.phname,
                 ps.shortmax,
                 ps.lat,
                 ps.lon
