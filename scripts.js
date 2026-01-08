@@ -18,7 +18,7 @@ function openParkhausOverlay(parkhausName, parkhausId) {
 
    
     // Overlay-Titel setzen
-    document.getElementById('overlayTitle').textContent = parkhausName;
+    document.getElementById('overlayTitle').textContent = parkhausId + "  " + parkhausName;
    
     // Daten für das spezielle Parkhaus laden
     loadParkhausDetails(parkhausId, parkhausName);
@@ -89,8 +89,6 @@ function displayParkhausDetails(data, parkhausName) {
    
     overlayContent.innerHTML = `
         <div class="parkhaus-detail">
-            <img src="images/IMG_0310.PNG" alt="${parkhausName}" style="width: 200px; border-radius: 15px; margin: 20px 0;">
-           
             <div class="status-badge ${isOpen ? 'status-open' : 'status-closed'}">
                 ${isOpen ? '🟢 Geöffnet' : '🔴 Geschlossen'}
             </div>
@@ -171,9 +169,6 @@ function displayDemoParkhausDetails(parkhausId, parkhausName) {
     // Fallback-Anzeige bei Ladefehler oder fehlenden Daten
     overlayContent.innerHTML = `
         <div class="parkhaus-detail">
-            <img src="images/IMG_0310.PNG" alt="${parkhausName}" style="width: 200px; border-radius: 15px; margin: 20px 0;">
-
-
             <div class="status-badge status-closed">
                 🔴 Daten konnten nicht geladen werden
             </div>
@@ -468,14 +463,19 @@ function create24HourChart(data, canvasId = 'mainChart', phidFilter = null) {
 
     // Sortiere nach Zeit und erstelle Labels
     const sortedHours = Object.keys(perHour).sort();
-    const labels = sortedHours.map(hour => {
-        const date = new Date(hour + ':00:00');
-        return date.toLocaleString('de-DE', { 
-            day: '2-digit', 
-            month: '2-digit', 
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+    const labels = sortedHours.map(hourKey => {
+        try {
+            // Format: "YYYY-MM-DD HH" -> Parse als ISO DateTime
+            const [datePart, hourPart] = hourKey.split(' ');
+            const date = new Date(datePart + 'T' + hourPart + ':00:00');
+            return date.toLocaleString('de-DE', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                hour: '2-digit'
+            }) + ' Uhr';
+        } catch (e) {
+            return hourKey;
+        }
     });
     const values = sortedHours.map(hour => 
         perHour[hour].count ? perHour[hour].sum / perHour[hour].count : 0
