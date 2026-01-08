@@ -1,8 +1,6 @@
 console.log("Parkhaus Dashboard gestartet");
 
 
-
-
 // ==================== GLOBALE VARIABLEN ====================
 let currentChart = null;
 let allDataCache = null;
@@ -13,13 +11,9 @@ let availableParkhaeuser = [];
 let map = null; // Karten-Variable
 
 
-
-
 // ==================== OVERLAY-FUNKTIONEN ====================
 function openParkhausOverlay(parkhausName, parkhausId) {
     console.log(`Öffne Overlay für: ${parkhausName} (${parkhausId})`);
-
-
 
 
    
@@ -37,10 +31,14 @@ function openParkhausOverlay(parkhausName, parkhausId) {
 }
 
 
-
-
 function closeOverlay() {
     console.log("Schließe Overlay");
+   
+    // Overlay-Chart zerstören falls vorhanden
+    if (overlayChart) {
+        overlayChart.destroy();
+        overlayChart = null;
+    }
    
     // Overlay verstecken
     document.getElementById('parkhausOverlay').style.display = 'none';
@@ -50,12 +48,8 @@ function closeOverlay() {
 }
 
 
-
-
 function loadParkhausDetails(parkhausId, parkhausName) {
     const overlayContent = document.getElementById('overlayContent');
-
-
 
 
    
@@ -83,16 +77,16 @@ function loadParkhausDetails(parkhausId, parkhausName) {
 }
 
 
-
-
 function displayParkhausDetails(data, parkhausName) {
     const latestData = data[0]; // Neueste Daten
     const overlayContent = document.getElementById('overlayContent');
+    const phid = latestData.phid;
    
     const isOpen = latestData.phstate === 'offen';
     const freePlaces = latestData.shortfree || 0;
     const occupancyPercent = latestData.belegung_prozent || 0;
     const totalPlaces = latestData.shortmax ?? 0;
+    const address = latestData.adresse || 'Adresse nicht verfügbar';
    
     overlayContent.innerHTML = `
         <div class="parkhaus-detail">
@@ -117,7 +111,30 @@ function displayParkhausDetails(data, parkhausName) {
                 </div>
                 <div class="stat-box">
                     <h4>Verfügbarkeit</h4>
-                    <div class="value">${(100 - occupancyPercent).toFixed(1)}%</div>
+                    <div class="value">${((100 - occupancyPercent).toFixed(1))}%</div>
+                </div>
+            </div>
+           
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #333;">📍 Standort</h4>
+                <p style="margin: 0; color: #666; font-size: 14px;">${address}</p>
+            </div>
+
+            <!-- Chart-Buttons für Overlay -->
+            <div class="overlay-chart-buttons" style="margin: 20px 0; text-align: center;">
+                <button id="overlayWeeklyBtn" class="chart-button active" onclick="switchOverlayChart('weekly', '${phid}')">
+                    Wöchentliche Ansicht
+                </button>
+                <button id="overlayDailyBtn" class="chart-button" onclick="switchOverlayChart('daily', '${phid}')">
+                    24h Ansicht
+                </button>
+            </div>
+
+            <!-- Chart für Parkhaus-Verlauf -->
+            <div class="overlay-chart-container" style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h3 id="overlayChartTitle" style="text-align: center; color: #333; margin-bottom: 15px;">Wöchentliche Belegung</h3>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="overlayChart"></canvas>
                 </div>
             </div>
            
@@ -138,9 +155,14 @@ function displayParkhausDetails(data, parkhausName) {
             </div>
         </div>
     `;
+
+    // Initial den wöchentlichen Chart für dieses Parkhaus laden
+    setTimeout(() => {
+        if (allDataCache) {
+            createWeeklyChart(allDataCache, 'overlayChart', phid);
+        }
+    }, 100);
 }
-
-
 
 
 function displayDemoParkhausDetails(parkhausId, parkhausName) {
@@ -151,14 +173,10 @@ function displayDemoParkhausDetails(parkhausId, parkhausName) {
     }
 
 
-
-
     // Fallback-Anzeige bei Ladefehler oder fehlenden Daten
     overlayContent.innerHTML = `
         <div class="parkhaus-detail">
             <img src="images/IMG_0310.PNG" alt="${parkhausName}" style="width: 200px; border-radius: 15px; margin: 20px 0;">
-
-
 
 
             <div class="status-badge status-closed">
@@ -166,14 +184,10 @@ function displayDemoParkhausDetails(parkhausId, parkhausName) {
             </div>
 
 
-
-
             <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin: 20px 0;">
                 <h4 style="margin: 0 0 10px 0; color: #333;">Fehler</h4>
                 <p style="margin: 0; color: #666; font-size: 14px;">Für ${parkhausName} (${parkhausId}) liegen aktuell keine Live-Daten vor.</p>
             </div>
-
-
 
 
             <div style="margin: 20px 0;">
@@ -211,8 +225,6 @@ function displayDemoParkhausDetails(parkhausId, parkhausName) {
 }
 
 
-
-
 function showOnMap(parkhausId) {
     closeOverlay();
     // Scroll zur Karte
@@ -221,16 +233,12 @@ function showOnMap(parkhausId) {
 }
 
 
-
-
 // Event-Listener für ESC-Taste zum Schließen des Overlays
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         closeOverlay();
     }
 });
-
-
 
 
 // Event-Listener für Klick außerhalb des Overlay-Inhalts
@@ -243,13 +251,7 @@ document.getElementById('parkhausOverlay')?.addEventListener('click', function(e
 
 
 
-
-
-
-
 // aus verlauf eingefügt
-
-
 
 
 // ==================== INITIALISIERUNG ====================
@@ -262,8 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Daten laden
     loadDashboardData();
 });
-
-
 
 
 // ==================== KARTEN-FUNKTIONEN ====================
@@ -280,18 +280,12 @@ function initializeMap() {
         }
 
 
-
-
         // St. Gallen Koordinaten
         const stGallenCoords = [47.4245, 9.3767];
 
 
-
-
         // Karte initialisieren
         map = L.map('map').setView(stGallenCoords, 13);
-
-
 
 
         // OpenStreetMap-Tiles hinzufügen
@@ -301,19 +295,13 @@ function initializeMap() {
         }).addTo(map);
 
 
-
-
         // Marker für St. Gallen Stadtzentrum
         const marker = L.marker(stGallenCoords).addTo(map);
         marker.bindPopup('<b>St. Gallen</b><br>Stadtzentrum').openPopup();
 
 
-
-
         // Maßstabsleiste hinzufügen
         L.control.scale().addTo(map);
-
-
 
 
         console.log("Karte erfolgreich initialisiert");
@@ -326,8 +314,6 @@ function initializeMap() {
         console.error('Fehler bei der Karten-Initialisierung:', error);
     }
 }
-
-
 
 
 function loadDashboardData() {
@@ -354,7 +340,8 @@ function loadDashboardData() {
            
             if (chartElement) {
                 console.log("Starte Chart-Erstellung...");
-                createWeeklyAverageChart(data);
+                // Standardmäßig wöchentliche Ansicht laden
+                createWeeklyChart(data);
                 setupMainEventListeners();
             } else {
                 console.warn("FEHLER: mainChart Canvas nicht gefunden!");
@@ -364,8 +351,6 @@ function loadDashboardData() {
             console.error('Fehler beim Laden der Daten:', error);
         });
 }
-
-
 
 
 function addParkhausMarkers() {
@@ -429,6 +414,12 @@ function addParkhausMarkers() {
         `;
        
         marker.bindPopup(popupContent);
+
+        marker.on('click', () => {
+    // Name aus Daten, sonst phid als Fallback
+    const name = parkhaus.phname || parkhaus.phid;
+    openParkhausOverlay(name, parkhaus.phid);
+});
     });
    
     console.log(`${parkhausMap.size} Parkhaus-Marker zur Karte hinzugefügt`);
@@ -444,7 +435,212 @@ function extractAvailableParkhaeuser(data) {
     console.log('Verfügbare Parkhäuser:', availableParkhaeuser.length);
 }
 
+// ==================== CHART-FUNKTIONEN ====================
 
+// Funktion für 24h-Ansicht: Stündliche Durchschnittsbelegung aller Parkhäuser
+function create24HourChart(data, canvasId = 'mainChart', phidFilter = null) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || !canvas.getContext) {
+        console.warn('create24HourChart: Canvas fehlt');
+        return;
+    }
+    if (!Array.isArray(data) || data.length === 0) {
+        console.warn('create24HourChart: keine Daten vorhanden');
+        return;
+    }
+
+    // Filtere nach Parkhaus wenn phidFilter gesetzt ist
+    const filteredData = phidFilter ? data.filter(row => row.phid === phidFilter) : data;
+
+    // Datenpunkte der letzten 24 Stunden
+    const now = new Date();
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    const recent24h = filteredData.filter(row => {
+        const rowDate = new Date(row.created_at);
+        return rowDate >= yesterday && rowDate <= now;
+    });
+
+    // Gruppierung nach Stunde
+    const perHour = {};
+    recent24h.forEach(row => {
+        const hour = (row.created_at || '').slice(0, 13); // YYYY-MM-DD HH
+        if (!hour) return;
+        perHour[hour] = perHour[hour] || { sum: 0, count: 0 };
+        perHour[hour].sum += Number(row.belegung_prozent) || 0;
+        perHour[hour].count += 1;
+    });
+
+    // Sortiere nach Zeit und erstelle Labels
+    const sortedHours = Object.keys(perHour).sort();
+    const labels = sortedHours.map(hour => {
+        const date = new Date(hour + ':00:00');
+        return date.toLocaleString('de-DE', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    });
+    const values = sortedHours.map(hour => 
+        perHour[hour].count ? perHour[hour].sum / perHour[hour].count : 0
+    );
+
+    // Chart zerstören falls vorhanden
+    if (canvasId === 'mainChart' && currentChart) {
+        currentChart.destroy();
+    }
+
+    const chartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Ø Belegung letzte 24h (%)',
+                data: values,
+                borderColor: '#764ba2',
+                backgroundColor: 'rgba(118,75,162,0.2)',
+                tension: 0.3,
+                fill: true,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Belegung (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Zeit'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
+
+    if (canvasId === 'mainChart') {
+        currentChart = chartInstance;
+    }
+    
+    console.log('24h-Chart erstellt mit', values.length, 'Datenpunkten');
+    return chartInstance;
+}
+
+// Funktion für 7-Tage-Ansicht: Tägliche Durchschnittsbelegung
+function createWeeklyChart(data, canvasId = 'mainChart', phidFilter = null) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || !canvas.getContext) {
+        console.warn('createWeeklyChart: Canvas fehlt');
+        return;
+    }
+    if (!Array.isArray(data) || data.length === 0) {
+        console.warn('createWeeklyChart: keine Daten vorhanden');
+        return;
+    }
+
+    // Filtere nach Parkhaus wenn phidFilter gesetzt ist
+    const filteredData = phidFilter ? data.filter(row => row.phid === phidFilter) : data;
+
+    // Datenpunkte der letzten 7 Tage
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    const recent7days = filteredData.filter(row => {
+        const rowDate = new Date(row.created_at);
+        return rowDate >= weekAgo && rowDate <= now;
+    });
+
+    // Gruppierung nach Tag
+    const perDay = {};
+    recent7days.forEach(row => {
+        const day = (row.created_at || '').slice(0, 10); // YYYY-MM-DD
+        if (!day) return;
+        perDay[day] = perDay[day] || { sum: 0, count: 0 };
+        perDay[day].sum += Number(row.belegung_prozent) || 0;
+        perDay[day].count += 1;
+    });
+
+    // Sortiere nach Datum und erstelle Labels
+    const sortedDays = Object.keys(perDay).sort();
+    const labels = sortedDays.map(day => {
+        const date = new Date(day);
+        return date.toLocaleDateString('de-DE', { 
+            weekday: 'short',
+            day: '2-digit', 
+            month: '2-digit'
+        });
+    });
+    const values = sortedDays.map(day => 
+        perDay[day].count ? perDay[day].sum / perDay[day].count : 0
+    );
+
+    // Chart zerstören falls vorhanden
+    if (canvasId === 'mainChart' && currentChart) {
+        currentChart.destroy();
+    }
+
+    const chartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Ø Belegung letzte 7 Tage (%)',
+                data: values,
+                backgroundColor: 'rgba(102,126,234,0.6)',
+                borderColor: '#667eea',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Belegung (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Datum'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
+
+    if (canvasId === 'mainChart') {
+        currentChart = chartInstance;
+    }
+    
+    console.log('Wochen-Chart erstellt mit', values.length, 'Datenpunkten');
+    return chartInstance;
+}
 
 
 function createWeeklyAverageChart(data) {
@@ -459,8 +655,6 @@ function createWeeklyAverageChart(data) {
     }
 
 
-
-
     // Einfache Demo-Auswertung: durchschnittliche Belegung pro Tag (nach Datum gruppiert)
     const perDay = {};
     data.forEach(row => {
@@ -472,19 +666,13 @@ function createWeeklyAverageChart(data) {
     });
 
 
-
-
     const labels = Object.keys(perDay).sort();
     const values = labels.map(day => perDay[day].count ? perDay[day].sum / perDay[day].count : 0);
-
-
 
 
     if (currentChart) {
         currentChart.destroy();
     }
-
-
 
 
     currentChart = new Chart(canvas.getContext('2d'), {
@@ -510,69 +698,107 @@ function createWeeklyAverageChart(data) {
 }
 
 
-
-
 function setupMainEventListeners() {
     // Schützt vor doppelter Registrierung
     if (setupMainEventListeners._initialized) return;
 
 
-
-
     const weeklyBtn = document.getElementById('weeklyBtn');
     const dailyBtn = document.getElementById('dailyBtn');
-    const individualBtn = document.getElementById('individualBtn');
-
-
+    const chartTitle = document.getElementById('chartTitle');
 
 
     if (weeklyBtn) {
         weeklyBtn.addEventListener('click', () => {
             currentView = 'weekly';
-            createWeeklyAverageChart(allDataCache || []);
+            
+            // Button-Styling
+            weeklyBtn.classList.add('active');
+            dailyBtn.classList.remove('active');
+            
+            // Chart-Titel aktualisieren
+            if (chartTitle) {
+                chartTitle.textContent = 'Wöchentliche Durchschnittsbelegung (7 Tage)';
+            }
+            
+            // Wöchentlichen Chart erstellen
+            createWeeklyChart(allDataCache || []);
         });
     }
-
-
 
 
     if (dailyBtn) {
         dailyBtn.addEventListener('click', () => {
             currentView = 'daily';
-            // Placeholder: könnte auf Stundenmittel umstellen
-            createWeeklyAverageChart(allDataCache || []);
+            
+            // Button-Styling
+            dailyBtn.classList.add('active');
+            weeklyBtn.classList.remove('active');
+            
+            // Chart-Titel aktualisieren
+            if (chartTitle) {
+                chartTitle.textContent = '24h Durchschnittsbelegung (stündlich)';
+            }
+            
+            // 24h Chart erstellen
+            create24HourChart(allDataCache || []);
         });
     }
-
-
-
-
-    if (individualBtn) {
-        individualBtn.addEventListener('click', () => {
-            currentView = 'individual';
-            // Placeholder: hier könnte Einzelparkhaus-Auswahl aktiviert werden
-            createWeeklyAverageChart(allDataCache || []);
-        });
-    }
-
-
 
 
     setupMainEventListeners._initialized = true;
     console.log('Event-Listener für Dashboard gesetzt');
 }
+
+
+// ==================== OVERLAY CHART-FUNKTIONEN ====================
+// Globale Variable für Overlay Chart
+let overlayChart = null;
+
+// Funktion zum Wechseln zwischen Charts im Overlay
+function switchOverlayChart(viewType, phid) {
+    const weeklyBtn = document.getElementById('overlayWeeklyBtn');
+    const dailyBtn = document.getElementById('overlayDailyBtn');
+    const chartTitle = document.getElementById('overlayChartTitle');
+    
+    if (viewType === 'weekly') {
+        // Button-Styling
+        if (weeklyBtn) weeklyBtn.classList.add('active');
+        if (dailyBtn) dailyBtn.classList.remove('active');
+        
+        // Titel aktualisieren
+        if (chartTitle) {
+            chartTitle.textContent = 'Wöchentliche Belegung (7 Tage)';
+        }
+        
+        // Chart erstellen
+        if (allDataCache) {
+            if (overlayChart) {
+                overlayChart.destroy();
+            }
+            overlayChart = createWeeklyChart(allDataCache, 'overlayChart', phid);
+        }
+    } else if (viewType === 'daily') {
+        // Button-Styling
+        if (dailyBtn) dailyBtn.classList.add('active');
+        if (weeklyBtn) weeklyBtn.classList.remove('active');
+        
+        // Titel aktualisieren
+        if (chartTitle) {
+            chartTitle.textContent = '24h Belegung (stündlich)';
+        }
+        
+        // Chart erstellen
+        if (allDataCache) {
+            if (overlayChart) {
+                overlayChart.destroy();
+            }
+            overlayChart = create24HourChart(allDataCache, 'overlayChart', phid);
+        }
+    }
+}
 // aus verlauf eingefügt (bereinigt):
 // Ungültige Selektoren entfernt, da es keine Elemente mit diesen IDs gibt.
-
-
-
-
-
-
-
-
-
-
 
 
 
