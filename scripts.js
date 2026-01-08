@@ -86,7 +86,6 @@ function displayParkhausDetails(data, parkhausName) {
     const freePlaces = latestData.shortfree || 0;
     const occupancyPercent = latestData.belegung_prozent || 0;
     const totalPlaces = latestData.shortmax ?? 0;
-    const address = latestData.adresse || 'Adresse nicht verfügbar';
    
     overlayContent.innerHTML = `
         <div class="parkhaus-detail">
@@ -115,10 +114,6 @@ function displayParkhausDetails(data, parkhausName) {
                 </div>
             </div>
            
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin: 20px 0;">
-                <h4 style="margin: 0 0 10px 0; color: #333;">📍 Standort</h4>
-                <p style="margin: 0; color: #666; font-size: 14px;">${address}</p>
-            </div>
 
             <!-- Chart-Buttons für Overlay -->
             <div class="overlay-chart-buttons" style="margin: 20px 0; text-align: center;">

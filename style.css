@@ -12,7 +12,9 @@ header {
   padding: 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  margin-bottom: 30px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 
@@ -43,117 +45,17 @@ font-family: "Bagel Fat One", sans-serif;
 
 
 
-
-
 main {
   justify-content: center;
   align-items: center;
   min-height: 200px;
-  padding: 20px;
-}
-
-
-/* CSS für Quadrate aus Figma */
-
-
-.variantgelb {
-  width: 200px;
-  height: 200px;
-  background-color: #FBEBBF;
-  color: #988244;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  word-wrap: break-word;
-}
-
-
-.variantpink {
-  width: 200px;
-  height: 200px;
-  background-color: #FFC4EE;
-  color: #B8539B;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  word-wrap: break-word;
-}
-
-
-.variantorange {
-  width: 200px;
-  height: 200px;
-  background-color: #FFE1C1;
-  color: #A27444;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  word-wrap: break-word;
-}
-
-
-.variantblau {
-  width: 200px;
-  height: 200px;
-  background-color: #CAF4F1;
-  color: #38918B;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  word-wrap: break-word;
-}
-
-
-.square {
-  width: 200px;
-  height: 200px;
-  text-align: center;
-  font-family: "Bagel Fat One";
-  font-weight: 400;
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 0;
-  align-items: center;
-  justify-content: center;
-  margin: 10px;
-  padding: 30px;
-
-
-}
-
-
-.graybar {
-  width: 200px;
-  height: 70px;
-  background-color: #B0B0B0;
-  color: white;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  word-wrap: break-word;
-}
-
-
-.square_container {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between; /* Ensures spacing between items */
-  align-items: center; /* Aligns items vertically in the center */
-  border-radius: 6px;
-  margin: 10px;
-
-
+  padding: 20px 0;
 }
 
 
 .graphics_container {
-  width: 100%;
+  width: 90%;
+  max-width: 1200px;
   height: auto;
   min-height: 500px;
   background-color: #B0B0B0;
@@ -162,7 +64,7 @@ main {
   flex-direction: column;
   padding: 20px;
   border-radius: 20px;
-  margin: 30px;
+  margin: 30px auto;
 }
 
 /* Button Container Styling */
@@ -259,52 +161,56 @@ main {
 
 
 .parkhaus_container_1 {
-  width: 100px;
+  width: 90%;
+  max-width: 1200px;
   display: flex;
   flex-direction: row;
   justify-content: space-between; /* Ensures spacing between items */
   align-items: center; /* Aligns items vertically in the center */
   border-radius: 6px;
-  margin: 30px;
+  margin: 30px auto;
 
 
 }
 
 
 .parkhaus_container_2 {
-  width: 100px;
+  width: 90%;
+  max-width: 1200px;
   display: flex;
   flex-direction: row;
   justify-content: space-between; /* Ensures spacing between items */
   align-items: center; /* Aligns items vertically in the center */
   border-radius: 6px;
-  margin: 30px;
+  margin: 30px auto;
 
 
 }
 
 
 .parkhaus_container_3 {
-  width: 100px;
+  width: 90%;
+  max-width: 1200px;
   display: flex;
   flex-direction: row;
   justify-content: space-between; /* Ensures spacing between items */
   align-items: center; /* Aligns items vertically in the center */
   border-radius: 6px;
-  margin: 30px;
+  margin: 30px auto;
 
 
 }
 
 
 .parkhaus_container_4 {
-  width: 100px;
+  width: 90%;
+  max-width: 1200px;
   display: flex;
   flex-direction: row;
   justify-content: space-between; /* Ensures spacing between items */
   align-items: center; /* Aligns items vertically in the center */
   border-radius: 6px;
-  margin: 30px;
+  margin: 30px auto;
 
 
 }
@@ -313,9 +219,10 @@ main {
 /* CSS für Map*/
 /* Aus verlauf eingefügt */
 .map_container {
-  margin: 40px auto;
+  margin: 30px auto;
   width: 90%;
-  max-width: 1000px;
+  max-width: 1200px;
+  box-sizing: border-box;
 }
 
 
@@ -540,10 +447,377 @@ main {
   color: #667eea;
 }
 
+/* ==================== RESPONSIVE DESIGN ==================== */
 
+/* Tablet Ansicht (bis 1024px) */
+@media screen and (max-width: 1024px) {
+  /* Header */
+  header h1 {
+    font-size: 36px;
+  }
 
+  h4 {
+    font-size: 32px;
+  }
 
+  p {
+    font-size: 20px;
+  }
 
+  /* Main Container */
+  main {
+    padding: 15px 0;
+  }
+
+  /* Square Container */
+  .square_container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .square {
+    margin: 10px;
+    padding: 20px;
+  }
+
+  /* Graphics Container */
+  .graphics_container {
+    min-height: 400px;
+    margin: 20px auto;
+    padding: 15px;
+  }
+
+  .button-container {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .chart-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .chart-section {
+    padding: 15px;
+  }
+
+  .chart-section h2 {
+    font-size: 20px;
+  }
+
+  /* Parkhaus Container */
+  .parkhaus_container_1,
+  .parkhaus_container_2,
+  .parkhaus_container_3,
+  .parkhaus_container_4 {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 10px;
+  }
+
+  .parkhaus_box {
+    margin: 8px;
+    padding: 20px;
+  }
+
+  .Bild_Parkhaus {
+    width: 130px;
+  }
+
+  .graybar_parkhaus {
+    width: 180px;
+    height: 60px;
+  }
+
+  .graybar_parkhaus p {
+    font-size: 18px;
+  }
+
+  /* Map Container */
+  .map_container {
+    width: 95%;
+    margin: 30px auto;
+  }
+
+  #map {
+    height: 400px;
+  }
+
+  /* Overlay */
+  .overlay-content {
+    width: 85%;
+    margin: 10% auto;
+  }
+
+  .overlay-header h2 {
+    font-size: 20px;
+  }
+
+  .overlay-body {
+    padding: 20px;
+  }
+
+  .parkhaus-stats {
+    gap: 10px;
+  }
+
+  .stat-box {
+    padding: 12px;
+  }
+
+  .stat-box .value {
+    font-size: 20px;
+  }
+}
+
+/* Mobile Ansicht (bis 600px) */
+@media screen and (max-width: 600px) {
+  /* Header */
+  header {
+    padding: 15px 10px;
+    margin: 0;
+  }
+
+  header h1 {
+    font-size: 24px;
+  }
+
+  h4 {
+    font-size: 24px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  /* Main Container */
+  main {
+    padding: 10px 0;
+  }
+
+  /* Square Container */
+  .square_container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .square {
+    width: 90%;
+    max-width: 300px;
+    margin: 10px 0;
+    padding: 15px;
+  }
+
+  .variantgelb,
+  .variantpink,
+  .variantorange,
+  .variantblau {
+    width: 100%;
+  }
+
+  .graybar {
+    width: 100%;
+    height: 60px;
+  }
+
+  .graybar p {
+    font-size: 18px;
+  }
+
+  /* Graphics Container */
+  .graphics_container {
+    min-height: 350px;
+    margin: 15px auto;
+    padding: 10px;
+    border-radius: 15px;
+  }
+
+  .button-container {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .chart-button {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .chart-section {
+    padding: 10px;
+  }
+
+  .chart-section h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .chart-section canvas {
+    max-height: 300px;
+  }
+
+  /* Parkhaus Container */
+  .parkhaus_container_1,
+  .parkhaus_container_2,
+  .parkhaus_container_3,
+  .parkhaus_container_4 {
+    flex-direction: column;
+    width: 100%;
+    margin: 15px 0;
+    align-items: center;
+  }
+
+  .parkhaus_box {
+    width: 90%;
+    max-width: 280px;
+    margin: 8px 0;
+    padding: 15px;
+  }
+
+  .Bild_Parkhaus {
+    width: 120px;
+  }
+
+  .graybar_parkhaus {
+    width: 100%;
+    max-width: 200px;
+    height: 55px;
+  }
+
+  .graybar_parkhaus p {
+    font-size: 16px;
+  }
+
+  .parkhaus_button {
+    padding: 8px 15px;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  /* Map Container */
+  .map_container {
+    width: 100%;
+    margin: 20px auto;
+  }
+
+  #map {
+    height: 300px;
+    border-radius: 8px;
+  }
+
+  /* Overlay */
+  .overlay-content {
+    width: 95%;
+    margin: 5% auto;
+    max-height: 90vh;
+  }
+
+  .overlay-header {
+    padding: 15px;
+  }
+
+  .overlay-header h2 {
+    font-size: 18px;
+  }
+
+  .close-button {
+    font-size: 28px;
+    padding: 3px 8px;
+  }
+
+  .overlay-body {
+    padding: 15px;
+  }
+
+  .parkhaus-detail img {
+    width: 150px !important;
+  }
+
+  .parkhaus-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-box {
+    padding: 10px;
+  }
+
+  .stat-box h4 {
+    font-size: 12px;
+  }
+
+  .stat-box .value {
+    font-size: 18px;
+  }
+
+  .status-badge {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+
+  /* Overlay Chart Buttons */
+  .overlay-chart-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .overlay-chart-buttons .chart-button {
+    width: 100%;
+    margin: 0;
+  }
+
+  .overlay-chart-container {
+    padding: 15px !important;
+    margin: 15px 0 !important;
+  }
+
+  .overlay-chart-container h3 {
+    font-size: 16px !important;
+  }
+
+  .overlay-chart-container > div {
+    height: 250px !important;
+  }
+
+  /* Leaflet Popup anpassen */
+  .leaflet-popup-content h4 {
+    font-size: 14px !important;
+  }
+
+  .leaflet-popup-content p {
+    font-size: 11px !important;
+  }
+}
+
+/* Sehr kleine Geräte (bis 400px) */
+@media screen and (max-width: 400px) {
+  header h1 {
+    font-size: 20px;
+  }
+
+  .square {
+    width: 95%;
+  }
+
+  .graphics_container {
+    margin: 10px auto;
+  }
+
+  .parkhaus_box {
+    width: 95%;
+  }
+
+  .overlay-content {
+    width: 98%;
+    margin: 3% auto;
+  }
+
+  .chart-section canvas {
+    max-height: 250px;
+  }
+}
 
 
 
