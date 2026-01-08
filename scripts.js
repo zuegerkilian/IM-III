@@ -812,7 +812,3 @@ function switchOverlayChart(viewType, phid) {
 // aus verlauf eingefügt (bereinigt):
 // Ungültige Selektoren entfernt, da es keine Elemente mit diesen IDs gibt.
 
-
-
-
-
